@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BGS_Interpreter": {
+      "commandName": "Project",
+      "commandLineArgs": "../../../Examples/example1.bgs"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+"Name"    = 'BGS'
+"About"   = 'Simple grammar to create didactic programming language'
+
+"Case Sensitive" = False 
+"Start Symbol"   = <Program>
+
+Identifier = {Letter}{AlphaNumeric}*
+Integer = '-'?{Digit}+   
+{String Ch} = {Printable} - ["]       
+StringVal = '"'  {String Ch}* '"'     
+DoubleVal = '-'?{Digit}+'.'{Digit}*
+BooleanVal = False | True          
+<Program> ::= <Statements>
+<Value> ::= StringVal | Integer | DoubleVal | Identifier | BooleanVal 
+<Number> ::= Integer | DoubleVal 
+
+<Statement> ::= <Declaration> <Statement> | <IfStatement> <Statement> | <WhileStatement> <Statement> | <ForStatement> <Statement> | <FuncStatment> <Statement> | ';' | return <Expression> ';' 
+             | <Expression> <Statement> | <PrintStmt> <Statement> | <Declaration> | <IfStatement> | <WhileStatement> | <ForStatement> | <FuncStatment> | <Expression> | <PrintStmt>
+<Statements> ::= <Statement> <Statements> | <Statement>
+<PrintStmt> ::= 'print' '(' <Expression> ')'
+<IfStatement> ::= 'if' '(' <Expression> ')' '{' <Statements> '}' 
+               | 'if' '(' <Expression> ')' '{' <Statements> '}' 'else' '{' <Statements> '}' 
+<ForStatement> ::= 'for' Identifier 'in' '(' <Number> ',' <Number> ')' '{' <Statements> '}'
+                | 'for' Identifier 'in' '(' <Number> ',' <Number> ',' <Number> ')' '{' <Statements> '}'      
+<WhileStatement> ::= 'while' '(' <Expression> ')' '{' <Statements> '}' 
+<RetValue> ::= 'int' | 'double' | 'string' | 'boolean'
+<FuncStatment> ::= 'function' Identifier '(' <Params> ')' '{' <Statements> '}'      
+                | 'function' Identifier '('')' '{' <Statements> '}'       
+                | 'function' Identifier '(' <Params> ')' ':' <RetValue> '{' <Statements> '}'     
+                | 'function' Identifier '('')' ':' <RetValue> '{' <Statements> '}'
+<Params> ::= Identifier | Identifier ',' <Params>
+<Declaration> ::= 'int' Identifier  | 'double' Identifier | 'string' Identifier | 'boolean' BooleanVal     
+               | 'string' Identifier '=' <Expression>  | 'double' Identifier '=' <Expression> | 'int' Identifier '=' <Expression>     
+<Expression> ::= <Expression> '>' <LogicExp>
+               | <Expression> '<' <LogicExp>
+               | <Expression> '>=' <LogicExp>
+               | <Expression> '<=' <LogicExp>
+               | <Expression> '==' <LogicExp>
+               | <Expression> '!=' <LogicExp>
+               | <Expression> '=' <LogicExp>
+               | <LogicExp>
+<LogicExp> ::= <LogicExp> '&&' <AddExp>
+             | <LogicExp> '||' <AddExp>
+             | <AddExp>
+<AddExp> ::= <AddExp> '+' <MulExp>
+           | <AddExp> '-' <MulExp>
+           | <MulExp>
+<MulExp> ::= <MulExp> '*' <Value>
+           | <MulExp> '/' <Value>
+           | <Value>
+
+            

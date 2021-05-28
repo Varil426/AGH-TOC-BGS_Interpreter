@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BGS_Interpreter
+﻿namespace BGS_Interpreter
 {
     class Interpreter
     {
 
-        private MyParser _parser;
+        private LanguageConcepts.Program _program;
 
-        public Interpreter(MyParser parser)
+        public Interpreter(LanguageConcepts.Program program)
         {
-            _parser = parser;
+            _program = program;
+        }
 
+        public void Run()
+        {
+            _program.Execute(null);
         }
 
     }

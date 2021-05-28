@@ -4,6 +4,8 @@ using System.IO;
 using System.Runtime.Serialization;
 using com.calitha.goldparser;
 using com.calitha.commons;
+using System.Collections.Generic;
+using BGS_Interpreter.LanguageConcepts;
 
 namespace BGS_Interpreter
 {
@@ -90,22 +92,24 @@ namespace BGS_Interpreter
         SYMBOL_STRINGVAL      = 38, // StringVal
         SYMBOL_WHILE          = 39, // while
         SYMBOL_ADDEXP         = 40, // <AddExp>
-        SYMBOL_DECLARATION    = 41, // <Declaration>
-        SYMBOL_EXPRESSION     = 42, // <Expression>
-        SYMBOL_FORSTATEMENT   = 43, // <ForStatement>
-        SYMBOL_FUNCSTATMENT   = 44, // <FuncStatment>
-        SYMBOL_IFSTATEMENT    = 45, // <IfStatement>
-        SYMBOL_LOGICEXP       = 46, // <LogicExp>
-        SYMBOL_MULEXP         = 47, // <MulExp>
-        SYMBOL_NUMBER         = 48, // <Number>
-        SYMBOL_PARAMS         = 49, // <Params>
-        SYMBOL_PRINTSTMT      = 50, // <PrintStmt>
-        SYMBOL_PROGRAM        = 51, // <Program>
-        SYMBOL_RETVALUE       = 52, // <RetValue>
-        SYMBOL_STATEMENT      = 53, // <Statement>
-        SYMBOL_STATEMENTS     = 54, // <Statements>
-        SYMBOL_VALUE          = 55, // <Value>
-        SYMBOL_WHILESTATEMENT = 56  // <WhileStatement>
+        SYMBOL_CALLFUNC       = 41, // <callFunc>
+        SYMBOL_DECLARATION    = 42, // <Declaration>
+        SYMBOL_EXPRESSION     = 43, // <Expression>
+        SYMBOL_FORSTATEMENT   = 44, // <ForStatement>
+        SYMBOL_FUNCSTATMENT   = 45, // <FuncStatment>
+        SYMBOL_IFSTATEMENT    = 46, // <IfStatement>
+        SYMBOL_LOGICEXP       = 47, // <LogicExp>
+        SYMBOL_MULEXP         = 48, // <MulExp>
+        SYMBOL_NUMBER         = 49, // <Number>
+        SYMBOL_PARAMS         = 50, // <Params>
+        SYMBOL_PRINTSTMT      = 51, // <PrintStmt>
+        SYMBOL_PROGRAM        = 52, // <Program>
+        SYMBOL_RETVALUE       = 53, // <RetValue>
+        SYMBOL_STATEMENT      = 54, // <Statement>
+        SYMBOL_STATEMENTS     = 55, // <Statements>
+        SYMBOL_TOCALLPARAM    = 56, // <toCallParam>
+        SYMBOL_VALUE          = 57, // <Value>
+        SYMBOL_WHILESTATEMENT = 58  // <WhileStatement>
     };
 
     enum RuleConstants : int
@@ -150,8 +154,8 @@ namespace BGS_Interpreter
         RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_LBRACE_RBRACE2          = 37, // <FuncStatment> ::= function Identifier '(' ')' '{' <Statements> '}'
         RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_COLON_LBRACE_RBRACE     = 38, // <FuncStatment> ::= function Identifier '(' <Params> ')' ':' <RetValue> '{' <Statements> '}'
         RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_COLON_LBRACE_RBRACE2    = 39, // <FuncStatment> ::= function Identifier '(' ')' ':' <RetValue> '{' <Statements> '}'
-        RULE_PARAMS_IDENTIFIER                                                      = 40, // <Params> ::= Identifier
-        RULE_PARAMS_IDENTIFIER_COMMA                                                = 41, // <Params> ::= Identifier ',' <Params>
+        RULE_PARAMS                                                                 = 40, // <Params> ::= <Declaration>
+        RULE_PARAMS_COMMA                                                           = 41, // <Params> ::= <Declaration> ',' <Params>
         RULE_DECLARATION_INT_IDENTIFIER                                             = 42, // <Declaration> ::= int Identifier
         RULE_DECLARATION_DOUBLE_IDENTIFIER                                          = 43, // <Declaration> ::= double Identifier
         RULE_DECLARATION_STRING_IDENTIFIER                                          = 44, // <Declaration> ::= string Identifier
@@ -175,10 +179,15 @@ namespace BGS_Interpreter
         RULE_ADDEXP                                                                 = 62, // <AddExp> ::= <MulExp>
         RULE_MULEXP_TIMES                                                           = 63, // <MulExp> ::= <MulExp> '*' <Value>
         RULE_MULEXP_DIV                                                             = 64, // <MulExp> ::= <MulExp> '/' <Value>
-        RULE_MULEXP                                                                 = 65  // <MulExp> ::= <Value>
+        RULE_MULEXP                                                                 = 65, // <MulExp> ::= <Value>
+        RULE_MULEXP2                                                                = 66, // <MulExp> ::= <callFunc>
+        RULE_TOCALLPARAM_IDENTIFIER                                                 = 67, // <toCallParam> ::= Identifier
+        RULE_TOCALLPARAM_IDENTIFIER_COMMA                                           = 68, // <toCallParam> ::= Identifier ',' <toCallParam>
+        RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN                                      = 69, // <callFunc> ::= Identifier '(' <toCallParam> ')'
+        RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN2                                     = 70  // <callFunc> ::= Identifier '(' ')'
     };
 
-    public class MyParser
+    internal class MyParser
     {
         private LALRParser parser;
 
@@ -219,14 +228,21 @@ namespace BGS_Interpreter
             parser.OnParseError += new LALRParser.ParseErrorHandler(ParseErrorEvent);
         }
 
-        public void Parse(string source)
+        public LanguageConcepts.Program Parse(string source)
         {
             NonterminalToken token = parser.Parse(source);
             if (token != null)
             {
                 Object obj = CreateObject(token);
                 //todo: Use your object any way you like
+                if (obj is LanguageConcepts.Program program)
+                {
+                    return program;
+                }
+
             }
+
+            throw new Exception();
         }
 
         private Object CreateObject(Token token)
@@ -392,9 +408,9 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)SymbolConstants.SYMBOL_IDENTIFIER :
-                //Identifier
-                //todo: Create a new object that corresponds to the symbol
-                return null;
+                    //Identifier
+                    //todo: Create a new object that corresponds to the symbol
+                    return token.Text;
 
                 case (int)SymbolConstants.SYMBOL_IF :
                 //if
@@ -414,7 +430,7 @@ namespace BGS_Interpreter
                 case (int)SymbolConstants.SYMBOL_INTEGER :
                 //Integer
                 //todo: Create a new object that corresponds to the symbol
-                return null;
+                    return new LanguageConcepts.Constant<LanguageConcepts.BaseTypes.Integer>(new LanguageConcepts.BaseTypes.Integer(int.Parse(token.Text)));
 
                 case (int)SymbolConstants.SYMBOL_PRINT :
                 //print
@@ -443,6 +459,11 @@ namespace BGS_Interpreter
 
                 case (int)SymbolConstants.SYMBOL_ADDEXP :
                 //<AddExp>
+                //todo: Create a new object that corresponds to the symbol
+                return null;
+
+                case (int)SymbolConstants.SYMBOL_CALLFUNC :
+                //<callFunc>
                 //todo: Create a new object that corresponds to the symbol
                 return null;
 
@@ -516,6 +537,11 @@ namespace BGS_Interpreter
                 //todo: Create a new object that corresponds to the symbol
                 return null;
 
+                case (int)SymbolConstants.SYMBOL_TOCALLPARAM :
+                //<toCallParam>
+                //todo: Create a new object that corresponds to the symbol
+                return null;
+
                 case (int)SymbolConstants.SYMBOL_VALUE :
                 //<Value>
                 //todo: Create a new object that corresponds to the symbol
@@ -535,9 +561,13 @@ namespace BGS_Interpreter
             switch (token.Rule.Id)
             {
                 case (int)RuleConstants.RULE_PROGRAM :
-                //<Program> ::= <Statements>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    {
+                        //<Program> ::= <Statements>
+                        //todo: Create a new object using the stored tokens.
+                        var executables = CreateObject(token.Tokens[0]) as List<IExecutable>;
+                        var program = new LanguageConcepts.Program(executables.ToArray());
+                        return program;
+                    }
 
                 case (int)RuleConstants.RULE_VALUE_STRINGVAL :
                 //<Value> ::= StringVal
@@ -547,7 +577,7 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_VALUE_INTEGER :
                 //<Value> ::= Integer
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_VALUE_DOUBLEVAL :
                 //<Value> ::= DoubleVal
@@ -557,7 +587,7 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_VALUE_IDENTIFIER :
                 //<Value> ::= Identifier
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_VALUE_BOOLEANVAL :
                 //<Value> ::= BooleanVal
@@ -575,9 +605,24 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)RuleConstants.RULE_STATEMENT :
-                //<Statement> ::= <Declaration> <Statement>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    {
+                        //<Statement> ::= <Declaration> <Statement>
+                        //todo: Create a new object using the stored tokens.
+                        var executablesList = new List<IExecutable>();
+                        for (var i = 0; i < token.Tokens.Length; i++)
+                        {
+                            var nextObject = CreateObject(token.Tokens[i]);
+                            if (nextObject is IExecutable executable)
+                            {
+                                executablesList.Add(executable);
+                            }
+                            else if (nextObject is List<IExecutable> nextExecutableList)
+                            {
+                                executablesList.AddRange(nextExecutableList);
+                            }
+                        }
+                        return executablesList;
+                    }
 
                 case (int)RuleConstants.RULE_STATEMENT2 :
                 //<Statement> ::= <IfStatement> <Statement>
@@ -612,7 +657,7 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_STATEMENT6 :
                 //<Statement> ::= <Expression> <Statement>
                 //todo: Create a new object using the stored tokens.
-                return null;
+                return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_STATEMENT7 :
                 //<Statement> ::= <PrintStmt> <Statement>
@@ -655,14 +700,53 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)RuleConstants.RULE_STATEMENTS :
-                //<Statements> ::= <Statement> <Statements>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    {
+                        //<Statements> ::= <Statement> <Statements>
+                        //todo: Create a new object using the stored tokens.
+                        var executablesList = new List<IExecutable>();
+
+                        var statementResult = CreateObject(token.Tokens[0]);
+                        if (statementResult is List<IExecutable>)
+                        {
+                            executablesList.AddRange(statementResult as List<IExecutable>);
+                        }
+                        else if (statementResult is IExecutable)
+                        {
+                            executablesList.Add(statementResult as IExecutable);
+                        }
+
+                        var restOfTheStatement = CreateObject(token.Tokens[1]);
+                        if (restOfTheStatement is List<IExecutable>)
+                        {
+                            executablesList.AddRange(restOfTheStatement as List<IExecutable>);
+                        }
+                        else if (restOfTheStatement is IExecutable)
+                        {
+                            executablesList.Add(restOfTheStatement as IExecutable);
+                        }
+
+                        return executablesList;
+                    }
 
                 case (int)RuleConstants.RULE_STATEMENTS2 :
-                //<Statements> ::= <Statement>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    {
+                        //<Statements> ::= <Statement>
+                        //todo: Create a new object using the stored tokens.
+                        var executablesList  = new List<IExecutable>();
+                        for (var i = 0; i < token.Tokens.Length; i++)
+                        {
+                            var nextObject = CreateObject(token.Tokens[i]);
+                            if (nextObject is IExecutable executable)
+                            {
+                                executablesList.Add(executable);
+                            }
+                            else if (nextObject is List<IExecutable> nextExecutableList)
+                            {
+                                executablesList.AddRange(nextExecutableList);
+                            }
+                        }
+                        return executablesList;
+                    }
 
                 case (int)RuleConstants.RULE_PRINTSTMT_PRINT_LPAREN_RPAREN :
                 //<PrintStmt> ::= print '(' <Expression> ')'
@@ -734,20 +818,20 @@ namespace BGS_Interpreter
                 //todo: Create a new object using the stored tokens.
                 return null;
 
-                case (int)RuleConstants.RULE_PARAMS_IDENTIFIER :
-                //<Params> ::= Identifier
+                case (int)RuleConstants.RULE_PARAMS :
+                //<Params> ::= <Declaration>
                 //todo: Create a new object using the stored tokens.
                 return null;
 
-                case (int)RuleConstants.RULE_PARAMS_IDENTIFIER_COMMA :
-                //<Params> ::= Identifier ',' <Params>
+                case (int)RuleConstants.RULE_PARAMS_COMMA :
+                //<Params> ::= <Declaration> ',' <Params>
                 //todo: Create a new object using the stored tokens.
                 return null;
 
                 case (int)RuleConstants.RULE_DECLARATION_INT_IDENTIFIER :
                 //<Declaration> ::= int Identifier
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return new VariableDeclaration<LanguageConcepts.BaseTypes.Integer>(new LanguageConcepts.BaseTypes.Integer(0), token.Tokens[1].ToString());
 
                 case (int)RuleConstants.RULE_DECLARATION_DOUBLE_IDENTIFIER :
                 //<Declaration> ::= double Identifier
@@ -810,14 +894,27 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)RuleConstants.RULE_EXPRESSION_EQ :
-                //<Expression> ::= <Expression> '=' <LogicExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Expression> ::= <Expression> '=' <LogicExp>
+                    //todo: Create a new object using the stored tokens.
+                    var variableName = CreateObject(token.Tokens[0]) as string;
+                    var value = CreateObject(token.Tokens[2]);
+                    switch (value)
+                    {
+                        case IValue<LanguageConcepts.BaseTypes.Integer> switchValue:
+                            return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Integer>(variableName, switchValue);
+                        case IValue<LanguageConcepts.BaseTypes.Double> switchValue:
+                            return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Double>(variableName, switchValue);
+                        case IValue<LanguageConcepts.BaseTypes.String> switchValue:
+                            return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.String>(variableName, switchValue);
+                        case IValue<LanguageConcepts.BaseTypes.Boolean> switchValue:
+                            return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Boolean>(variableName, switchValue);
+                    }
+                    throw new Exception();
 
                 case (int)RuleConstants.RULE_EXPRESSION :
-                //<Expression> ::= <LogicExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Expression> ::= <LogicExp>
+                    //todo: Create a new object using the stored tokens.
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_LOGICEXP_AMPAMP :
                 //<LogicExp> ::= <LogicExp> '&&' <AddExp>
@@ -830,9 +927,9 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)RuleConstants.RULE_LOGICEXP :
-                //<LogicExp> ::= <AddExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<LogicExp> ::= <AddExp>
+                    //todo: Create a new object using the stored tokens.
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_ADDEXP_PLUS :
                 //<AddExp> ::= <AddExp> '+' <MulExp>
@@ -845,9 +942,9 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)RuleConstants.RULE_ADDEXP :
-                //<AddExp> ::= <MulExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<AddExp> ::= <MulExp>
+                    //todo: Create a new object using the stored tokens.
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_MULEXP_TIMES :
                 //<MulExp> ::= <MulExp> '*' <Value>
@@ -860,10 +957,34 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)RuleConstants.RULE_MULEXP :
-                //<MulExp> ::= <Value>
+                    //<MulExp> ::= <Value>
+                    //todo: Create a new object using the stored tokens.
+                    return CreateObject(token.Tokens[0]);
+
+                case (int)RuleConstants.RULE_MULEXP2 :
+                //<MulExp> ::= <callFunc>
                 //todo: Create a new object using the stored tokens.
                 return null;
 
+                case (int)RuleConstants.RULE_TOCALLPARAM_IDENTIFIER :
+                //<toCallParam> ::= Identifier
+                //todo: Create a new object using the stored tokens.
+                return null;
+
+                case (int)RuleConstants.RULE_TOCALLPARAM_IDENTIFIER_COMMA :
+                //<toCallParam> ::= Identifier ',' <toCallParam>
+                //todo: Create a new object using the stored tokens.
+                return null;
+
+                case (int)RuleConstants.RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN :
+                //<callFunc> ::= Identifier '(' <toCallParam> ')'
+                //todo: Create a new object using the stored tokens.
+                return null;
+
+                case (int)RuleConstants.RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN2 :
+                //<callFunc> ::= Identifier '(' ')'
+                //todo: Create a new object using the stored tokens.
+                return null;
             }
             throw new RuleException("Unknown rule");
         }

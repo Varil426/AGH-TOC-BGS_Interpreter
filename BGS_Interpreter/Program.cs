@@ -15,14 +15,16 @@ namespace BGS_Interpreter
                 // Get path to file
                 var pathToSource = args[0];
 
-                // Initialiation of Parser Factory
+                // Initialiation of Parser
                 var pathToGrammarCgt = Path.GetFullPath(grammarCgtFileName);
-
                 var fileContent = new StreamReader(pathToSource).ReadToEnd();
-
                 var parser = new MyParser(pathToGrammarCgt);
 
-                parser.Parse(fileContent);
+                // TODO Maybe change this?
+                var program = parser.Parse(fileContent);
+
+                var interpreter = new Interpreter(program);
+                interpreter.Run();
             }
             else
             {

@@ -28,7 +28,7 @@ BooleanVal = False | True
                 | 'function' Identifier '('')' '{' <Statements> '}'       
                 | 'function' Identifier '(' <Params> ')' ':' <RetValue> '{' <Statements> '}'     
                 | 'function' Identifier '('')' ':' <RetValue> '{' <Statements> '}'
-<Params> ::= Identifier | Identifier ',' <Params>
+<Params> ::= <Declaration> | <Declaration> ',' <Params>  
 <Declaration> ::= 'int' Identifier  | 'double' Identifier | 'string' Identifier | 'boolean' BooleanVal     
                | 'string' Identifier '=' <Expression>  | 'double' Identifier '=' <Expression> | 'int' Identifier '=' <Expression>     
 <Expression> ::= <Expression> '>' <LogicExp>
@@ -48,5 +48,8 @@ BooleanVal = False | True
 <MulExp> ::= <MulExp> '*' <Value>
            | <MulExp> '/' <Value>
            | <Value>
+           | <callFunc> 
+<toCallParam> ::= Identifier | Identifier ',' <toCallParam>
+<callFunc> ::= Identifier '(' <toCallParam> ')' | Identifier '(' ')' 
 
             

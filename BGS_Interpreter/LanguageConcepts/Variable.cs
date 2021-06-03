@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BGS_Interpreter.LanguageConcepts
 {
-    internal abstract class Variable : LanguageObject
+    internal abstract class Variable : LanguageObject, IValue
     {
         public Variable(string name)
         {
@@ -14,9 +14,15 @@ namespace BGS_Interpreter.LanguageConcepts
         }
 
         public string Name { get; init; }
+
+        public abstract BaseTypes.Type Evaluate();
+
+        public abstract BaseTypes.Type Evaluate(Scope context);
+
+        public abstract void Assign(BaseTypes.Type value);
     }
 
-    internal class Variable<T> : Variable, IValue<T> where T : BaseTypes.Type
+    internal class Variable<T> : Variable where T : BaseTypes.Type
     {
         private T _value;
 
@@ -29,17 +35,24 @@ namespace BGS_Interpreter.LanguageConcepts
             _value = value;
         }
 
-        public void Assign(T newValue)
+        public override void Assign(BaseTypes.Type newValue)
         {
-            _value = newValue;
+            if (newValue is T newValueConverted)
+            {
+                _value = newValueConverted;
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
 
-        public T Evaluate()
+        public override T Evaluate()
         {
             return _value;
         }
 
-        public T Evaluate(Scope context)
+        public override T Evaluate(Scope context)
         {
             return Evaluate();
         }

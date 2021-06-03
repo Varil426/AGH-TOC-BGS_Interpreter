@@ -2,7 +2,6 @@
 using BGS_Interpreter.LanguageConcepts.Expressions;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,14 +22,13 @@ namespace BGS_Interpreter.LanguageConcepts
 
         public override T Evaluate()
         {
-            Execute(null);
-            return _returnValue;
+            throw new Exception("Scope is needed to call a function.");
         }
 
         public override T Evaluate(Scope context)
         {
             Execute(context);
-            return _returnValue;
+            return _returnValue as T ?? throw new Exception();
         }
 
         public override void Execute(Scope context)
@@ -39,7 +37,7 @@ namespace BGS_Interpreter.LanguageConcepts
             if (function is Function<T> convertedFunction)
             {
                 convertedFunction.SetInputs(_inputs);
-                _returnValue = convertedFunction.Evaluate();
+                _returnValue = convertedFunction.Evaluate() as T;
             }
             else
             {

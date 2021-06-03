@@ -8,33 +8,39 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 {
     internal abstract class Expression<T> : LanguageObject, IValue<T>, IExecutable where T : BaseTypes.Type
     {
-        protected T _returnValue;
+        protected BaseTypes.Type _returnValue;
 
-        public abstract T Evaluate();
+        public abstract BaseTypes.Type Evaluate();
 
-        public abstract T Evaluate(Scope context);
+        public abstract BaseTypes.Type Evaluate(Scope context);
 
         public abstract void Execute(Scope context);
     }
 
     internal class AssignmentExpression<T> : Expression<T> where T : BaseTypes.Type
     {
-        private readonly string _variableName;
+        private readonly VariableIdentifier _variableIdentifier;
 
-        private readonly IValue<T> _value;
+        private readonly IValue _value;
 
-        public AssignmentExpression(string varialbeName, IValue<T> value)
+        public AssignmentExpression(string varialbeName, IValue value)
         {
-            _variableName = varialbeName;
+            _variableIdentifier = new VariableIdentifier(varialbeName);
             _value = value;
         }
 
-        public override T Evaluate()
+        public AssignmentExpression(VariableIdentifier identifier, IValue value)
+        {
+            _variableIdentifier = identifier;
+            _value = value;
+        }
+
+        public override BaseTypes.Type Evaluate()
         {
             throw new InvalidOperationException("Assignment needs context.");
         }
 
-        public override T Evaluate(Scope context)
+        public override BaseTypes.Type Evaluate(Scope context)
         {
             Execute(context);
             return _returnValue;
@@ -42,14 +48,11 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
         public override void Execute(Scope context)
         {
-            var variable = context.GetVariable(_variableName);
+            var variable = _variableIdentifier.GetVariable(context);
 
-            if (variable is Variable<T> convertedVariable)
-            {
-                var value = _value.Evaluate();
-                convertedVariable.Assign(value);
-                _returnValue = value;
-            }
+            var value = _value.Evaluate(context);
+            variable.Assign(value);
+            _returnValue = value;
         }
     }
 }

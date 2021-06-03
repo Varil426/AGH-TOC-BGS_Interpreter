@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,8 +57,8 @@ namespace BGS_Interpreter.LanguageConcepts
 
         public FunctionDeclaration(string name, Declaration[] inputs, IExecutable[] executables, BaseTypes.Type returnType) : base(name)
         {
-            _inputDeclarations = new ReadOnlyCollection<Declaration>(inputs.ToList());
-            _executables = new ReadOnlyCollection<IExecutable>(executables.ToList());
+            _inputDeclarations = new List<Declaration>(inputs.ToList()).AsReadOnly();
+            _executables = new List<IExecutable>(executables.ToList()).AsReadOnly();
             Type = returnType;
         }
 

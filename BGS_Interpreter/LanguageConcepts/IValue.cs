@@ -8,13 +8,14 @@ namespace BGS_Interpreter.LanguageConcepts
 {
     internal interface IValue
     {
-
+        public BaseTypes.Type Evaluate();
+        public BaseTypes.Type Evaluate(Scope context);
     }
 
     internal interface IValue<T> : IValue where T : BaseTypes.Type
     {
-        public T Evaluate();
+        //public T Evaluate();
 
-        public T Evaluate(Scope context);
+        //public T Evaluate(Scope context);
     }
 }

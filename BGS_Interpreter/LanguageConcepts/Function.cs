@@ -2,7 +2,6 @@
 using BGS_Interpreter.LanguageConcepts.Expressions;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,16 +39,16 @@ namespace BGS_Interpreter.LanguageConcepts
 
         public void SetInputs(IValue[] inputs)
         {
-            _inputValues = new ReadOnlyCollection<IValue>(inputs);
+            _inputValues = new List<IValue>(inputs).AsReadOnly();
         }
 
-        public T Evaluate()
+        public BaseTypes.Type Evaluate()
         {
             Execute(null);
             return _returnValue;
         }
 
-        public T Evaluate(Scope context)
+        public BaseTypes.Type Evaluate(Scope context)
         {
             Execute(context);
             return _returnValue;
@@ -69,32 +68,28 @@ namespace BGS_Interpreter.LanguageConcepts
                 switch (inputDeclaration.Type)
                 {
                     case BaseTypes.Integer when variable is Variable<BaseTypes.Integer> var && inputValuesList[i] is IValue<BaseTypes.Integer> val:
-                        var.Assign(val.Evaluate());
+                        var.Assign(val.Evaluate() as BaseTypes.Integer);
                         break;
                     case BaseTypes.Double when variable is Variable<BaseTypes.Double> var && inputValuesList[i] is IValue<BaseTypes.Double> val:
-                        var.Assign(val.Evaluate());
+                        var.Assign(val.Evaluate() as BaseTypes.Double);
                         break;
                     case BaseTypes.String when variable is Variable<BaseTypes.String> var && inputValuesList[i] is IValue<BaseTypes.String> val:
-                        var.Assign(val.Evaluate());
+                        var.Assign(val.Evaluate() as BaseTypes.String);
                         break;
                     case BaseTypes.Boolean when variable is Variable<BaseTypes.Boolean> var && inputValuesList[i] is IValue<BaseTypes.Boolean> val:
-                        var.Assign(val.Evaluate());
+                        var.Assign(val.Evaluate() as BaseTypes.Boolean);
                         break;
                 }
             }
 
             try
             {
-                foreach (var executable in _executables)
-                {
-                    executable.Execute(functionScope);
-                }
+                _executables.ToList().ForEach(x => x.Execute(functionScope));
             }
             catch (ReturnException returnVal)
             {
                 _returnValue = returnVal.ReturnValue as T;
             }
-            var test = 123;
         }
     }
 }

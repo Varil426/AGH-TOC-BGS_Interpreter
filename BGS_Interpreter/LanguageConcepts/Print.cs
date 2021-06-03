@@ -9,32 +9,31 @@ namespace BGS_Interpreter.LanguageConcepts
     // TODO Think about it
     class Print : LanguageObject, IExecutable
     {
-        private readonly string _message;
+        private readonly IValue _message;
 
-        public Print(string message)
+        public Print(IValue message)
         {
             _message = message;
         }
 
-        public Print(BaseTypes.Integer value) : this($"{value.Value}")
-        {
-        }
-
-        public Print(BaseTypes.Double value) : this($"{value.Value}")
-        {
-        }
-
-        public Print(BaseTypes.Boolean value) : this($"{value.Value}")
-        {
-        }
-
-        public Print(BaseTypes.String value) : this($"{value.Value}")
-        {
-        }
-
         public void Execute(Scope context)
         {
-            System.Console.WriteLine(_message);
+            switch (_message.Evaluate(context))
+            {
+                case BaseTypes.Integer value:
+                    System.Console.WriteLine(value.Value);
+                    break;
+                case BaseTypes.Double value:
+                    System.Console.WriteLine(value.Value);
+                    break;
+                case BaseTypes.String value:
+                    System.Console.WriteLine(value.Value);
+                    break;
+                case BaseTypes.Boolean value:
+                    System.Console.WriteLine(value.Value);
+                    break;
+            }
+            
         }
     }
 }

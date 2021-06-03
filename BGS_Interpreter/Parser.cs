@@ -378,9 +378,9 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)SymbolConstants.SYMBOL_BOOLEANVAL :
-                //BooleanVal
-                //todo: Create a new object that corresponds to the symbol
-                return null;
+                    //BooleanVal
+                    //todo: Create a new object that corresponds to the symbol
+                    return new LanguageConcepts.Constant<LanguageConcepts.BaseTypes.Boolean>(new LanguageConcepts.BaseTypes.Boolean(bool.Parse(token.Text)));
 
                 case (int)SymbolConstants.SYMBOL_DOUBLE :
                 //double
@@ -388,9 +388,9 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)SymbolConstants.SYMBOL_DOUBLEVAL :
-                //DoubleVal
-                //todo: Create a new object that corresponds to the symbol
-                return null;
+                    //DoubleVal
+                    //todo: Create a new object that corresponds to the symbol
+                    return new LanguageConcepts.Constant<LanguageConcepts.BaseTypes.Double>(new LanguageConcepts.BaseTypes.Double(double.Parse(token.Text)));
 
                 case (int)SymbolConstants.SYMBOL_ELSE :
                 //else
@@ -448,9 +448,9 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)SymbolConstants.SYMBOL_STRINGVAL :
-                //StringVal
-                //todo: Create a new object that corresponds to the symbol
-                return null;
+                    //StringVal
+                    //todo: Create a new object that corresponds to the symbol
+                    return new LanguageConcepts.Constant<LanguageConcepts.BaseTypes.String>(new LanguageConcepts.BaseTypes.String(token.Text.Replace("\"", string.Empty)));
 
                 case (int)SymbolConstants.SYMBOL_WHILE :
                 //while
@@ -570,9 +570,9 @@ namespace BGS_Interpreter
                     }
 
                 case (int)RuleConstants.RULE_VALUE_STRINGVAL :
-                //<Value> ::= StringVal
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Value> ::= StringVal
+                    //todo: Create a new object using the stored tokens.
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_VALUE_INTEGER :
                 //<Value> ::= Integer
@@ -580,19 +580,19 @@ namespace BGS_Interpreter
                     return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_VALUE_DOUBLEVAL :
-                //<Value> ::= DoubleVal
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Value> ::= DoubleVal
+                    //todo: Create a new object using the stored tokens.
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_VALUE_IDENTIFIER :
                 //<Value> ::= Identifier
                 //todo: Create a new object using the stored tokens.
-                    return CreateObject(token.Tokens[0]);
+                    return new VariableIdentifier(CreateObject(token.Tokens[0]) as string);
 
                 case (int)RuleConstants.RULE_VALUE_BOOLEANVAL :
-                //<Value> ::= BooleanVal
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Value> ::= BooleanVal
+                    //todo: Create a new object using the stored tokens.
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_NUMBER_INTEGER :
                 //<Number> ::= Integer
@@ -662,7 +662,7 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_STATEMENT7 :
                 //<Statement> ::= <PrintStmt> <Statement>
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_STATEMENT8 :
                 //<Statement> ::= <Declaration>
@@ -749,9 +749,16 @@ namespace BGS_Interpreter
                     }
 
                 case (int)RuleConstants.RULE_PRINTSTMT_PRINT_LPAREN_RPAREN :
-                //<PrintStmt> ::= print '(' <Expression> ')'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<PrintStmt> ::= print '(' <Expression> ')'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var returnedObject = CreateObject(token.Tokens[2]);
+                        if (returnedObject is IValue value)
+                        {
+                            return new Print(value);
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_IFSTATEMENT_IF_LPAREN_RPAREN_LBRACE_RBRACE :
                 //<IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}'
@@ -829,24 +836,24 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)RuleConstants.RULE_DECLARATION_INT_IDENTIFIER :
-                //<Declaration> ::= int Identifier
-                //todo: Create a new object using the stored tokens.
+                    //<Declaration> ::= int Identifier
+                    //todo: Create a new object using the stored tokens.
                     return new VariableDeclaration<LanguageConcepts.BaseTypes.Integer>(new LanguageConcepts.BaseTypes.Integer(0), token.Tokens[1].ToString());
 
                 case (int)RuleConstants.RULE_DECLARATION_DOUBLE_IDENTIFIER :
-                //<Declaration> ::= double Identifier
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Declaration> ::= double Identifier
+                    //todo: Create a new object using the stored tokens.
+                    return new VariableDeclaration<LanguageConcepts.BaseTypes.Double>(new LanguageConcepts.BaseTypes.Double(0), token.Tokens[1].ToString());
 
                 case (int)RuleConstants.RULE_DECLARATION_STRING_IDENTIFIER :
-                //<Declaration> ::= string Identifier
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Declaration> ::= string Identifier
+                    //todo: Create a new object using the stored tokens.
+                    return new VariableDeclaration<LanguageConcepts.BaseTypes.String>(new LanguageConcepts.BaseTypes.String(string.Empty), token.Tokens[1].ToString());
 
                 case (int)RuleConstants.RULE_DECLARATION_BOOLEAN_BOOLEANVAL :
-                //<Declaration> ::= boolean BooleanVal
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Declaration> ::= boolean BooleanVal
+                    //todo: Create a new object using the stored tokens.
+                    return new VariableDeclaration<LanguageConcepts.BaseTypes.Boolean>(new LanguageConcepts.BaseTypes.Boolean(false), token.Tokens[1].ToString());
 
                 case (int)RuleConstants.RULE_DECLARATION_STRING_IDENTIFIER_EQ :
                 //<Declaration> ::= string Identifier '=' <Expression>
@@ -896,20 +903,24 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_EXPRESSION_EQ :
                     //<Expression> ::= <Expression> '=' <LogicExp>
                     //todo: Create a new object using the stored tokens.
-                    var variableName = CreateObject(token.Tokens[0]) as string;
-                    var value = CreateObject(token.Tokens[2]);
-                    switch (value)
                     {
-                        case IValue<LanguageConcepts.BaseTypes.Integer> switchValue:
-                            return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Integer>(variableName, switchValue);
-                        case IValue<LanguageConcepts.BaseTypes.Double> switchValue:
-                            return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Double>(variableName, switchValue);
-                        case IValue<LanguageConcepts.BaseTypes.String> switchValue:
-                            return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.String>(variableName, switchValue);
-                        case IValue<LanguageConcepts.BaseTypes.Boolean> switchValue:
-                            return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Boolean>(variableName, switchValue);
+                        var variableIdentifier = CreateObject(token.Tokens[0]) as VariableIdentifier;
+                        var value = CreateObject(token.Tokens[2]);
+                        switch (value)
+                        {
+                            case IValue<LanguageConcepts.BaseTypes.Integer> switchValue:
+                                return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Integer>(variableIdentifier, switchValue);
+                            case IValue<LanguageConcepts.BaseTypes.Double> switchValue:
+                                return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Double>(variableIdentifier, switchValue);
+                            case IValue<LanguageConcepts.BaseTypes.String> switchValue:
+                                return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.String>(variableIdentifier, switchValue);
+                            case IValue<LanguageConcepts.BaseTypes.Boolean> switchValue:
+                                return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Boolean>(variableIdentifier, switchValue);
+                            case VariableIdentifier switchValue:
+                                return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Type>(variableIdentifier, switchValue);
+                        }
+                        throw new Exception();
                     }
-                    throw new Exception();
 
                 case (int)RuleConstants.RULE_EXPRESSION :
                     //<Expression> ::= <LogicExp>

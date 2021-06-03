@@ -19,12 +19,12 @@ namespace BGS_Interpreter.LanguageConcepts
             _value = value;
         }
 
-        public T Evaluate()
+        public BaseTypes.Type Evaluate()
         {
             return _value;
         }
 
-        public T Evaluate(Scope context)
+        public BaseTypes.Type Evaluate(Scope context)
         {
             return Evaluate();
         }

@@ -29,7 +29,7 @@ BooleanVal = False | True
                 | 'function' Identifier '(' <Params> ')' ':' <RetValue> '{' <Statements> '}'     
                 | 'function' Identifier '('')' ':' <RetValue> '{' <Statements> '}'
 <Params> ::= <Declaration> | <Declaration> ',' <Params>  
-<Declaration> ::= 'int' Identifier  | 'double' Identifier | 'string' Identifier | 'boolean' BooleanVal     
+<Declaration> ::= 'int' Identifier  | 'double' Identifier | 'string' Identifier | 'boolean' Identifier     
                | 'string' Identifier '=' <Expression>  | 'double' Identifier '=' <Expression> | 'int' Identifier '=' <Expression>     
 <Expression> ::= <Expression> '>' <LogicExp>
                | <Expression> '<' <LogicExp>

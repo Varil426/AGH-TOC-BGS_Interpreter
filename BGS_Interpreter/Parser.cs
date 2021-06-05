@@ -6,6 +6,7 @@ using com.calitha.goldparser;
 using com.calitha.commons;
 using System.Collections.Generic;
 using BGS_Interpreter.LanguageConcepts;
+using BGS_Interpreter.LanguageConcepts.Expressions;
 
 namespace BGS_Interpreter
 {
@@ -856,19 +857,43 @@ namespace BGS_Interpreter
                     return new VariableDeclaration<LanguageConcepts.BaseTypes.Boolean>(new LanguageConcepts.BaseTypes.Boolean(false), token.Tokens[1].ToString());
 
                 case (int)RuleConstants.RULE_DECLARATION_STRING_IDENTIFIER_EQ :
-                //<Declaration> ::= string Identifier '=' <Expression>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Declaration> ::= string Identifier '=' <Expression>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var name = CreateObject(token.Tokens[1]) as string;
+                        var value = CreateObject(token.Tokens[3]) as IValue<LanguageConcepts.BaseTypes.String>;
+                        if (name is not null && value is not null)
+                        {
+                            return new LanguageConcepts.VariableDeclaration<LanguageConcepts.BaseTypes.String>(new LanguageConcepts.BaseTypes.String(string.Empty), name, value);
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_DECLARATION_DOUBLE_IDENTIFIER_EQ :
-                //<Declaration> ::= double Identifier '=' <Expression>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Declaration> ::= double Identifier '=' <Expression>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var name = CreateObject(token.Tokens[1]) as string;
+                        var value = CreateObject(token.Tokens[3]) as IValue<LanguageConcepts.BaseTypes.Double>;
+                        if (name is not null && value is not null)
+                        {
+                            return new LanguageConcepts.VariableDeclaration<LanguageConcepts.BaseTypes.Double>(new LanguageConcepts.BaseTypes.Double(0), name, value);
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_DECLARATION_INT_IDENTIFIER_EQ :
-                //<Declaration> ::= int Identifier '=' <Expression>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Declaration> ::= int Identifier '=' <Expression>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var name = CreateObject(token.Tokens[1]) as string;
+                        var value = CreateObject(token.Tokens[3]) as IValue<LanguageConcepts.BaseTypes.Integer>;
+                        if (name is not null && value is not null)
+                        {
+                            return new LanguageConcepts.VariableDeclaration<LanguageConcepts.BaseTypes.Integer>(new LanguageConcepts.BaseTypes.Integer(0), name, value);
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_EXPRESSION_GT :
                 //<Expression> ::= <Expression> '>' <LogicExp>
@@ -943,14 +968,44 @@ namespace BGS_Interpreter
                     return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_ADDEXP_PLUS :
-                //<AddExp> ::= <AddExp> '+' <MulExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<AddExp> ::= <AddExp> '+' <MulExp>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var left = CreateObject(token.Tokens[0]) as IValue;
+                        var right = CreateObject(token.Tokens[2]) as IValue;
+                        if (left is not null && right is not null)
+                        {
+                            switch (left)
+                            {
+                                case IValue<LanguageConcepts.BaseTypes.Integer> val1 when right is IValue<LanguageConcepts.BaseTypes.Integer> val2:
+                                    return new AdditionExpression<LanguageConcepts.BaseTypes.Integer>(val1, val2);
+                                case IValue<LanguageConcepts.BaseTypes.Double> val1 when right is IValue < LanguageConcepts.BaseTypes.Double> val2:
+                                    return new AdditionExpression<LanguageConcepts.BaseTypes.Double>(val1, val2);
+                                case IValue<LanguageConcepts.BaseTypes.String> val1 when right is IValue<LanguageConcepts.BaseTypes.String> val2:
+                                    return new AdditionExpression<LanguageConcepts.BaseTypes.String>(val1, val2);
+                            }
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_ADDEXP_MINUS :
-                //<AddExp> ::= <AddExp> '-' <MulExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<AddExp> ::= <AddExp> '-' <MulExp>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var left = CreateObject(token.Tokens[0]) as IValue;
+                        var right = CreateObject(token.Tokens[2]) as IValue;
+                        if (left is not null && right is not null)
+                        {
+                            switch (left)
+                            {
+                                case IValue<LanguageConcepts.BaseTypes.Integer> val1 when right is IValue<LanguageConcepts.BaseTypes.Integer> val2:
+                                    return new SubtractionExpression<LanguageConcepts.BaseTypes.Integer>(val1, val2);
+                                case IValue<LanguageConcepts.BaseTypes.Double> val1 when right is IValue<LanguageConcepts.BaseTypes.Double> val2:
+                                    return new SubtractionExpression<LanguageConcepts.BaseTypes.Double>(val1, val2);
+                            }
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_ADDEXP :
                     //<AddExp> ::= <MulExp>

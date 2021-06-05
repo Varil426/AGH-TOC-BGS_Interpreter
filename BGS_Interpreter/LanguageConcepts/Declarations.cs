@@ -12,7 +12,7 @@ namespace BGS_Interpreter.LanguageConcepts
 
         public BaseTypes.Type Type { get; protected init; }
 
-        public abstract void Execute(Scope scope);
+        public abstract void Execute(Scope context);
 
         public Declaration(string name)
         {
@@ -22,29 +22,41 @@ namespace BGS_Interpreter.LanguageConcepts
 
     internal class VariableDeclaration<T> : Declaration where T : BaseTypes.Type
     {
+        private IValue<T> _initValue;
+
         public VariableDeclaration(BaseTypes.Type type, string name) : base(name)
         {
             Type = type;
         }
 
-        public override void Execute(Scope scope)
+        public VariableDeclaration(BaseTypes.Type type, string name, IValue<T> value) : this(type, name)
+        {
+            _initValue = value;
+        }
+
+        public override void Execute(Scope context)
         {
             switch (Type)
             {
                 case BaseTypes.Integer:
-                    scope.AddVariable(new Variable<BaseTypes.Integer>(Name));
+                    context.AddVariable(new Variable<BaseTypes.Integer>(Name));
                     break;
                 case BaseTypes.Double:
-                    scope.AddVariable(new Variable<BaseTypes.Double>(Name));
+                    context.AddVariable(new Variable<BaseTypes.Double>(Name));
                     break;
                 case BaseTypes.Boolean:
-                    scope.AddVariable(new Variable<BaseTypes.Boolean>(Name));
+                    context.AddVariable(new Variable<BaseTypes.Boolean>(Name));
                     break;
                 case BaseTypes.String:
-                    scope.AddVariable(new Variable<BaseTypes.String>(Name));
+                    context.AddVariable(new Variable<BaseTypes.String>(Name));
                     break;
                 default:
                     throw new InvalidOperationException("Unknow type.");
+            }
+
+            if (_initValue != null)
+            {
+                context.GetVariable(Name).Assign(_initValue.Evaluate());
             }
         }
     }
@@ -62,21 +74,21 @@ namespace BGS_Interpreter.LanguageConcepts
             Type = returnType;
         }
 
-        public override void Execute(Scope scope)
+        public override void Execute(Scope context)
         {
             switch (Type)
             {
                 case BaseTypes.Integer:
-                    scope.AddFunction(new Function<BaseTypes.Integer>(Name, _inputDeclarations.ToArray(), _executables.ToArray()));
+                    context.AddFunction(new Function<BaseTypes.Integer>(Name, _inputDeclarations.ToArray(), _executables.ToArray()));
                     break;
                 case BaseTypes.Double:
-                    scope.AddFunction(new Function<BaseTypes.Double>(Name, _inputDeclarations.ToArray(), _executables.ToArray()));
+                    context.AddFunction(new Function<BaseTypes.Double>(Name, _inputDeclarations.ToArray(), _executables.ToArray()));
                     break;
                 case BaseTypes.Boolean:
-                    scope.AddFunction(new Function<BaseTypes.Boolean>(Name, _inputDeclarations.ToArray(), _executables.ToArray()));
+                    context.AddFunction(new Function<BaseTypes.Boolean>(Name, _inputDeclarations.ToArray(), _executables.ToArray()));
                     break;
                 case BaseTypes.String:
-                    scope.AddFunction(new Function<BaseTypes.String>(Name, _inputDeclarations.ToArray(), _executables.ToArray()));
+                    context.AddFunction(new Function<BaseTypes.String>(Name, _inputDeclarations.ToArray(), _executables.ToArray()));
                     break;
                 default:
                     throw new InvalidOperationException("Unknow type.");

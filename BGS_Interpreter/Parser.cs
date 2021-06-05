@@ -953,14 +953,38 @@ namespace BGS_Interpreter
                     return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_LOGICEXP_AMPAMP :
-                //<LogicExp> ::= <LogicExp> '&&' <AddExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<LogicExp> ::= <LogicExp> '&&' <AddExp>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var left = CreateObject(token.Tokens[0]) as IValue;
+                        var right = CreateObject(token.Tokens[2]) as IValue;
+                        if (left is not null && right is not null)
+                        {
+                            switch (left)
+                            {
+                                case IValue<LanguageConcepts.BaseTypes.Boolean> val1 when right is IValue<LanguageConcepts.BaseTypes.Boolean> val2:
+                                    return new LogicalAndExpression(val1, val2);
+                            }
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_LOGICEXP_PIPEPIPE :
-                //<LogicExp> ::= <LogicExp> '||' <AddExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<LogicExp> ::= <LogicExp> '||' <AddExp>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var left = CreateObject(token.Tokens[0]) as IValue;
+                        var right = CreateObject(token.Tokens[2]) as IValue;
+                        if (left is not null && right is not null)
+                        {
+                            switch (left)
+                            {
+                                case IValue<LanguageConcepts.BaseTypes.Boolean> val1 when right is IValue<LanguageConcepts.BaseTypes.Boolean> val2:
+                                    return new LogicalOrExpression(val1, val2);
+                            }
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_LOGICEXP :
                     //<LogicExp> ::= <AddExp>
@@ -1013,14 +1037,42 @@ namespace BGS_Interpreter
                     return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_MULEXP_TIMES :
-                //<MulExp> ::= <MulExp> '*' <Value>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<MulExp> ::= <MulExp> '*' <Value>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var left = CreateObject(token.Tokens[0]) as IValue;
+                        var right = CreateObject(token.Tokens[2]) as IValue;
+                        if (left is not null && right is not null)
+                        {
+                            switch (left)
+                            {
+                                case IValue<LanguageConcepts.BaseTypes.Integer> val1 when right is IValue<LanguageConcepts.BaseTypes.Integer> val2:
+                                    return new MultiplicationExpression<LanguageConcepts.BaseTypes.Integer>(val1, val2);
+                                case IValue<LanguageConcepts.BaseTypes.Double> val1 when right is IValue<LanguageConcepts.BaseTypes.Double> val2:
+                                    return new MultiplicationExpression<LanguageConcepts.BaseTypes.Double>(val1, val2);
+                            }
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_MULEXP_DIV :
-                //<MulExp> ::= <MulExp> '/' <Value>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<MulExp> ::= <MulExp> '/' <Value>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var left = CreateObject(token.Tokens[0]) as IValue;
+                        var right = CreateObject(token.Tokens[2]) as IValue;
+                        if (left is not null && right is not null)
+                        {
+                            switch (left)
+                            {
+                                case IValue<LanguageConcepts.BaseTypes.Integer> val1 when right is IValue<LanguageConcepts.BaseTypes.Integer> val2:
+                                    return new DivisionExpression<LanguageConcepts.BaseTypes.Integer>(val1, val2);
+                                case IValue<LanguageConcepts.BaseTypes.Double> val1 when right is IValue<LanguageConcepts.BaseTypes.Double> val2:
+                                    return new DivisionExpression<LanguageConcepts.BaseTypes.Double>(val1, val2);
+                            }
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_MULEXP :
                     //<MulExp> ::= <Value>

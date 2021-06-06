@@ -400,4 +400,20 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
             }
         }
     }
+
+    internal class LogicalNotExpression : Expression<BaseTypes.Boolean>
+    {
+        private readonly IValue<BaseTypes.Boolean> _initialValue;
+
+        public LogicalNotExpression(IValue<BaseTypes.Boolean> initialValue)
+        {
+            _initialValue = initialValue;
+        }
+
+        public override void Execute(Scope context)
+        {
+            var result = _initialValue.Evaluate(context) as BaseTypes.Boolean;
+            _returnValue = new BaseTypes.Boolean(!result.Value);
+        }
+    }
 }

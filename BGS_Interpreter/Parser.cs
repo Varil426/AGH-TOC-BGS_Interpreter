@@ -638,29 +638,12 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_STATEMENT_SEMI :
                     //<Statement> ::= <Declaration> ';'
                     //todo: Create a new object using the stored tokens.
-                    {
-                        //<Statement> ::= <Declaration> <Statement>
-                        //todo: Create a new object using the stored tokens.
-                        var executablesList = new List<IExecutable>();
-                        for (var i = 0; i < token.Tokens.Length; i++)
-                        {
-                            var nextObject = CreateObject(token.Tokens[i]);
-                            if (nextObject is IExecutable executable)
-                            {
-                                executablesList.Add(executable);
-                            }
-                            else if (nextObject is List<IExecutable> nextExecutableList)
-                            {
-                                executablesList.AddRange(nextExecutableList);
-                            }
-                        }
-                        return executablesList;
-                    }
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_STATEMENT :
                 //<Statement> ::= <IfStatement>
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_STATEMENT2 :
                     //<Statement> ::= <WhileStatement>
@@ -749,14 +732,32 @@ namespace BGS_Interpreter
                     }
 
                 case (int)RuleConstants.RULE_IFSTATEMENT_IF_LPAREN_RPAREN_LBRACE_RBRACE :
-                //<IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var condition = CreateObject(token.Tokens[2]) as IValue<LanguageConcepts.BaseTypes.Boolean>;
+                        var statements = CreateObject(token.Tokens[5]) as List<IExecutable>;
+                        if (condition is not null && statements is not null)
+                        {
+                            return new IfStatement(condition, statements.ToArray());
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_IFSTATEMENT_IF_LPAREN_RPAREN_LBRACE_RBRACE_ELSE_LBRACE_RBRACE :
-                //<IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}' else '{' <Statements> '}'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}' else '{' <Statements> '}'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var condition = CreateObject(token.Tokens[2]) as IValue<LanguageConcepts.BaseTypes.Boolean>;
+                        var statementsTrue = CreateObject(token.Tokens[5]) as List<IExecutable>;
+                        var statementsFalse = CreateObject(token.Tokens[9]) as List<IExecutable>;
+
+                        if (condition is not null && statementsTrue is not null && statementsFalse is not null)
+                        {
+                            return new IfStatement(condition, statementsTrue.ToArray(), statementsFalse.ToArray());
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_FORSTATEMENT_FOR_IDENTIFIER_IN_LPAREN_COMMA_RPAREN_LBRACE_RBRACE :
                 //<ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ')' '{' <Statements> '}'
@@ -912,7 +913,16 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_DECLARATION_BOOLEAN_IDENTIFIER_EQ:
                     //<Declaration> ::= boolean Identifier '=' <Expression>
                     //todo: Create a new object using the stored tokens.
-                    return null;
+                    {
+                        var name = CreateObject(token.Tokens[1]) as string;
+                        var value = CreateObject(token.Tokens[3]) as IValue<LanguageConcepts.BaseTypes.Boolean>;
+                        if (name is not null && value is not null)
+                        {
+                            variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Boolean);
+                            return new LanguageConcepts.VariableDeclaration<LanguageConcepts.BaseTypes.Boolean>(new LanguageConcepts.BaseTypes.Boolean(false), name, value);
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_EXPRESSION_GT :
                     //<Expression> ::= <Expression> '>' <LogicExp>
@@ -1141,7 +1151,14 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_MULEXP_EXCLAM:
                     //<MulExp> ::= '!' <Value>
                     //todo: Create a new object using the stored tokens.
-                    return null;
+                    {
+                        var value = CreateObject(token.Tokens[1]) as IValue<LanguageConcepts.BaseTypes.Boolean>;
+                        if (value is not null)
+                        {
+                            return new LogicalNotExpression(value);
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_MULEXP2 :
                 //<MulExp> ::= <callFunc>

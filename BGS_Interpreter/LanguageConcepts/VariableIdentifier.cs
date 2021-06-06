@@ -7,23 +7,31 @@ using System.Threading.Tasks;
 
 namespace BGS_Interpreter.LanguageConcepts
 {
-    class VariableIdentifier : LanguageObject, IExecutable, IValue
+    abstract class VariableIdentifier : LanguageObject, IExecutable
     {
         public string Name { get; private init; }
 
-        private Variable _variable;
-
+        protected Variable _variable;
         public VariableIdentifier(string name)
         {
             Name = name;
         }
 
+        public abstract void Execute(Scope context);
+
         public Variable GetVariable(Scope context)
         {
             return context.GetVariable(Name);
         }
+    }
 
-        public void Execute(Scope context)
+    class VariableIdentifier<T> : VariableIdentifier, IValue<T> where T : BaseTypes.Type
+    {
+        public VariableIdentifier(string name) : base(name)
+        {
+        }
+
+        public override void Execute(Scope context)
         {
             _variable = context.GetVariable(Name);
         }
@@ -36,7 +44,7 @@ namespace BGS_Interpreter.LanguageConcepts
         public BaseTypes.Type Evaluate(Scope context)
         {
             Execute(context);
-            return _variable.Evaluate();
+            return _variable.Evaluate(context);
         }
     }
 }

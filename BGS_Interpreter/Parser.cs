@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using com.calitha.goldparser;
 using com.calitha.commons;
@@ -191,6 +192,8 @@ namespace BGS_Interpreter
     internal class MyParser
     {
         private LALRParser parser;
+
+        private readonly Stack<Dictionary<string, System.Type>> variablesTypes = new ();
 
         public MyParser(string pathToFile)
         {
@@ -565,8 +568,10 @@ namespace BGS_Interpreter
                     {
                         //<Program> ::= <Statements>
                         //todo: Create a new object using the stored tokens.
+                        variablesTypes.Push(new ());
                         var executables = CreateObject(token.Tokens[0]) as List<IExecutable>;
                         var program = new LanguageConcepts.Program(executables.ToArray());
+                        variablesTypes.Pop();
                         return program;
                     }
 
@@ -586,9 +591,29 @@ namespace BGS_Interpreter
                     return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_VALUE_IDENTIFIER :
-                //<Value> ::= Identifier
-                //todo: Create a new object using the stored tokens.
-                    return new VariableIdentifier(CreateObject(token.Tokens[0]) as string);
+                    //<Value> ::= Identifier
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var name = CreateObject(token.Tokens[0]) as string;
+                        var typeOfVariable = variablesTypes.SelectMany(x => x).First(x => x.Key == name).Value;
+                        if (typeOfVariable == typeof(LanguageConcepts.BaseTypes.Integer))
+                        {
+                            return new VariableIdentifier<LanguageConcepts.BaseTypes.Integer>(name);
+                        }
+                        else if (typeOfVariable == typeof(LanguageConcepts.BaseTypes.Double))
+                        {
+                            return new VariableIdentifier<LanguageConcepts.BaseTypes.Double>(name);
+                        }
+                        else if (typeOfVariable == typeof(LanguageConcepts.BaseTypes.String))
+                        {
+                            return new VariableIdentifier<LanguageConcepts.BaseTypes.String>(name);
+                        }
+                        else if (typeOfVariable == typeof(LanguageConcepts.BaseTypes.Boolean))
+                        {
+                            return new VariableIdentifier<LanguageConcepts.BaseTypes.Boolean>(name);
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_VALUE_BOOLEANVAL :
                     //<Value> ::= BooleanVal
@@ -676,9 +701,9 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)RuleConstants.RULE_STATEMENT10 :
-                //<Statement> ::= <WhileStatement>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Statement> ::= <WhileStatement>
+                    //todo: Create a new object using the stored tokens.
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_STATEMENT11 :
                 //<Statement> ::= <ForStatement>
@@ -782,9 +807,17 @@ namespace BGS_Interpreter
                 return null;
 
                 case (int)RuleConstants.RULE_WHILESTATEMENT_WHILE_LPAREN_RPAREN_LBRACE_RBRACE :
-                //<WhileStatement> ::= while '(' <Expression> ')' '{' <Statements> '}'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<WhileStatement> ::= while '(' <Expression> ')' '{' <Statements> '}'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        variablesTypes.Push(new());
+                        if (CreateObject(token.Tokens[2]) is IValue<LanguageConcepts.BaseTypes.Boolean> condition && CreateObject(token.Tokens[5]) is List<IExecutable> statements)
+                        {
+                            variablesTypes.Pop();
+                            return new LanguageConcepts.Loops.WhileLoop(condition, statements.ToArray());
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_RETVALUE_INT :
                 //<RetValue> ::= int
@@ -839,22 +872,38 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_DECLARATION_INT_IDENTIFIER :
                     //<Declaration> ::= int Identifier
                     //todo: Create a new object using the stored tokens.
-                    return new VariableDeclaration<LanguageConcepts.BaseTypes.Integer>(new LanguageConcepts.BaseTypes.Integer(0), token.Tokens[1].ToString());
+                    {
+                        var name = token.Tokens[1].ToString();
+                        variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Integer);
+                        return new VariableDeclaration<LanguageConcepts.BaseTypes.Integer>(new LanguageConcepts.BaseTypes.Integer(0), name);
+                    }
 
                 case (int)RuleConstants.RULE_DECLARATION_DOUBLE_IDENTIFIER :
                     //<Declaration> ::= double Identifier
                     //todo: Create a new object using the stored tokens.
-                    return new VariableDeclaration<LanguageConcepts.BaseTypes.Double>(new LanguageConcepts.BaseTypes.Double(0), token.Tokens[1].ToString());
+                    {
+                        var name = token.Tokens[1].ToString();
+                        variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Double);
+                        return new VariableDeclaration<LanguageConcepts.BaseTypes.Double>(new LanguageConcepts.BaseTypes.Double(0), name);
+                    }
 
                 case (int)RuleConstants.RULE_DECLARATION_STRING_IDENTIFIER :
                     //<Declaration> ::= string Identifier
                     //todo: Create a new object using the stored tokens.
-                    return new VariableDeclaration<LanguageConcepts.BaseTypes.String>(new LanguageConcepts.BaseTypes.String(string.Empty), token.Tokens[1].ToString());
+                    {
+                        var name = token.Tokens[1].ToString();
+                        variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.String);
+                        return new VariableDeclaration<LanguageConcepts.BaseTypes.String>(new LanguageConcepts.BaseTypes.String(string.Empty), name);
+                    }
 
                 case (int)RuleConstants.RULE_DECLARATION_BOOLEAN_BOOLEANVAL :
                     //<Declaration> ::= boolean BooleanVal
                     //todo: Create a new object using the stored tokens.
-                    return new VariableDeclaration<LanguageConcepts.BaseTypes.Boolean>(new LanguageConcepts.BaseTypes.Boolean(false), token.Tokens[1].ToString());
+                    {
+                        var name = token.Tokens[1].ToString();
+                        variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Boolean);
+                        return new VariableDeclaration<LanguageConcepts.BaseTypes.Boolean>(new LanguageConcepts.BaseTypes.Boolean(false), name);
+                    }
 
                 case (int)RuleConstants.RULE_DECLARATION_STRING_IDENTIFIER_EQ :
                     //<Declaration> ::= string Identifier '=' <Expression>
@@ -864,6 +913,7 @@ namespace BGS_Interpreter
                         var value = CreateObject(token.Tokens[3]) as IValue<LanguageConcepts.BaseTypes.String>;
                         if (name is not null && value is not null)
                         {
+                            variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.String);
                             return new LanguageConcepts.VariableDeclaration<LanguageConcepts.BaseTypes.String>(new LanguageConcepts.BaseTypes.String(string.Empty), name, value);
                         }
                         throw new Exception();
@@ -877,6 +927,7 @@ namespace BGS_Interpreter
                         var value = CreateObject(token.Tokens[3]) as IValue<LanguageConcepts.BaseTypes.Double>;
                         if (name is not null && value is not null)
                         {
+                            variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Double);
                             return new LanguageConcepts.VariableDeclaration<LanguageConcepts.BaseTypes.Double>(new LanguageConcepts.BaseTypes.Double(0), name, value);
                         }
                         throw new Exception();
@@ -890,6 +941,7 @@ namespace BGS_Interpreter
                         var value = CreateObject(token.Tokens[3]) as IValue<LanguageConcepts.BaseTypes.Integer>;
                         if (name is not null && value is not null)
                         {
+                            variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Integer);
                             return new LanguageConcepts.VariableDeclaration<LanguageConcepts.BaseTypes.Integer>(new LanguageConcepts.BaseTypes.Integer(0), name, value);
                         }
                         throw new Exception();
@@ -983,8 +1035,6 @@ namespace BGS_Interpreter
                                 return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.String>(variableIdentifier, switchValue);
                             case IValue<LanguageConcepts.BaseTypes.Boolean> switchValue:
                                 return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Boolean>(variableIdentifier, switchValue);
-                            case VariableIdentifier switchValue:
-                                return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Type>(variableIdentifier, switchValue);
                         }
                         throw new Exception();
                     }
@@ -1045,7 +1095,7 @@ namespace BGS_Interpreter
                             {
                                 case IValue<LanguageConcepts.BaseTypes.Integer> val1 when right is IValue<LanguageConcepts.BaseTypes.Integer> val2:
                                     return new AdditionExpression<LanguageConcepts.BaseTypes.Integer>(val1, val2);
-                                case IValue<LanguageConcepts.BaseTypes.Double> val1 when right is IValue < LanguageConcepts.BaseTypes.Double> val2:
+                                case IValue<LanguageConcepts.BaseTypes.Double> val1 when right is IValue <LanguageConcepts.BaseTypes.Double> val2:
                                     return new AdditionExpression<LanguageConcepts.BaseTypes.Double>(val1, val2);
                                 case IValue<LanguageConcepts.BaseTypes.String> val1 when right is IValue<LanguageConcepts.BaseTypes.String> val2:
                                     return new AdditionExpression<LanguageConcepts.BaseTypes.String>(val1, val2);

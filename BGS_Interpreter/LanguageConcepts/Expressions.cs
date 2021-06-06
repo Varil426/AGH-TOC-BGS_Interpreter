@@ -33,7 +33,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
         public AssignmentExpression(string varialbeName, IValue value)
         {
-            _variableIdentifier = new VariableIdentifier(varialbeName);
+            _variableIdentifier = new VariableIdentifier<T>(varialbeName);
             _value = value;
         }
 
@@ -63,23 +63,13 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
         protected IValue _leftSide;
         protected IValue _rightSide;
 
-        protected bool IsNumericType(IValue value)
-        {
-            if (value is IValue<BaseTypes.Integer> or IValue<BaseTypes.Double>)
-            {
-                return true;
-            }
-            return false;
-        }
+        protected bool IsNumericType(IValue value) => value is IValue<BaseTypes.Integer> or IValue<BaseTypes.Double>;
 
-        protected bool IsLogicType(IValue value)
-        {
-            if (value is IValue<BaseTypes.Boolean>)
-            {
-                return true;
-            }
-            return false;
-        }
+        protected bool IsLogicType(IValue value) => value is IValue<BaseTypes.Boolean>;
+
+        protected bool IsVariableIdentifier(IValue value) => value is VariableIdentifier;
+
+        protected bool IsStringType(IValue value) => value is IValue<BaseTypes.String>;
 
         public MathExpression(IValue left, IValue right)
         {
@@ -92,7 +82,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public AdditionExpression(IValue left, IValue right) : base(left, right)
         {
-            if (!(IsNumericType(left) && IsNumericType(right)))
+            if (!((IsNumericType(left) || IsStringType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsStringType(right) || IsVariableIdentifier(right))))
             {
                 throw new Exception();
             }
@@ -127,7 +117,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public SubtractionExpression(IValue left, IValue right) : base(left, right)
         {
-            if (!(IsNumericType(left) && IsNumericType(right)))
+            if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
                 throw new Exception();
             }
@@ -159,7 +149,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public MultiplicationExpression(IValue left, IValue right) : base(left, right)
         {
-            if (!(IsNumericType(left) && IsNumericType(right)))
+            if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
                 throw new Exception();
             }
@@ -191,7 +181,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public DivisionExpression(IValue left, IValue right) : base(left, right)
         {
-            if (!(IsNumericType(left) && IsNumericType(right)))
+            if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
                 throw new Exception();
             }
@@ -231,7 +221,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public LogicalAndExpression(IValue<BaseTypes.Boolean> left, IValue<BaseTypes.Boolean> right) : base(left, right)
         {
-            if (!(IsLogicType(left) && IsLogicType(right)))
+            if (!((IsLogicType(left) || IsVariableIdentifier(left)) && (IsLogicType(right) || IsVariableIdentifier(right))))
             {
                 throw new Exception();
             }
@@ -239,8 +229,8 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
         public override void Execute(Scope context)
         {
-            var val1 = _leftSide.Evaluate() as BaseTypes.Boolean;
-            var val2 = _rightSide.Evaluate() as BaseTypes.Boolean;
+            var val1 = _leftSide.Evaluate(context) as BaseTypes.Boolean;
+            var val2 = _rightSide.Evaluate(context) as BaseTypes.Boolean;
             _returnValue = new BaseTypes.Boolean(val1.Value && val2.Value);
         }
     }
@@ -249,7 +239,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public LogicalOrExpression(IValue<BaseTypes.Boolean> left, IValue<BaseTypes.Boolean> right) : base(left, right)
         {
-            if (!(IsLogicType(left) && IsLogicType(right)))
+            if (!((IsLogicType(left) || IsVariableIdentifier(left)) && (IsLogicType(right) || IsVariableIdentifier(right))))
             {
                 throw new Exception();
             }
@@ -257,8 +247,8 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
         public override void Execute(Scope context)
         {
-            var val1 = _leftSide.Evaluate() as BaseTypes.Boolean;
-            var val2 = _rightSide.Evaluate() as BaseTypes.Boolean;
+            var val1 = _leftSide.Evaluate(context) as BaseTypes.Boolean;
+            var val2 = _rightSide.Evaluate(context) as BaseTypes.Boolean;
             _returnValue = new BaseTypes.Boolean(val1.Value || val2.Value);
         }
     }
@@ -267,7 +257,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public NumberLessExpression(IValue left, IValue right) : base(left, right)
         {
-            if (!(IsNumericType(left) && IsNumericType(right)))
+            if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
                 throw new Exception();
             }
@@ -275,8 +265,8 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
         public override void Execute(Scope context)
         {
-            dynamic val1 = _leftSide.Evaluate();
-            dynamic val2 = _rightSide.Evaluate();
+            dynamic val1 = _leftSide.Evaluate(context);
+            dynamic val2 = _rightSide.Evaluate(context);
 
             if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
             {
@@ -293,7 +283,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public NumberGreaterExpression(IValue left, IValue right) : base(left, right)
         {
-            if (!(IsNumericType(left) && IsNumericType(right)))
+            if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
                 throw new Exception();
             }
@@ -301,8 +291,8 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
         public override void Execute(Scope context)
         {
-            dynamic val1 = _leftSide.Evaluate();
-            dynamic val2 = _rightSide.Evaluate();
+            dynamic val1 = _leftSide.Evaluate(context);
+            dynamic val2 = _rightSide.Evaluate(context);
 
             if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
             {
@@ -319,7 +309,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public NumberLessOrEqualExpression(IValue left, IValue right) : base(left, right)
         {
-            if (!(IsNumericType(left) && IsNumericType(right)))
+            if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
                 throw new Exception();
             }
@@ -327,8 +317,8 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
         public override void Execute(Scope context)
         {
-            dynamic val1 = _leftSide.Evaluate();
-            dynamic val2 = _rightSide.Evaluate();
+            dynamic val1 = _leftSide.Evaluate(context);
+            dynamic val2 = _rightSide.Evaluate(context);
 
             if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
             {
@@ -345,7 +335,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public NumberGreaterOrEqualExpression(IValue left, IValue right) : base(left, right)
         {
-            if (!(IsNumericType(left) && IsNumericType(right)))
+            if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
                 throw new Exception();
             }
@@ -353,8 +343,8 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
         public override void Execute(Scope context)
         {
-            dynamic val1 = _leftSide.Evaluate();
-            dynamic val2 = _rightSide.Evaluate();
+            dynamic val1 = _leftSide.Evaluate(context);
+            dynamic val2 = _rightSide.Evaluate(context);
 
             if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
             {
@@ -371,16 +361,12 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public EqualExpression(IValue left, IValue right) : base(left, right)
         {
-            if (!(IsNumericType(left) && IsNumericType(right)) && !(IsLogicType(left) && IsLogicType(right)))
-            {
-                throw new Exception();
-            }
         }
 
         public override void Execute(Scope context)
         {
-            dynamic val1 = _leftSide.Evaluate();
-            dynamic val2 = _rightSide.Evaluate();
+            dynamic val1 = _leftSide.Evaluate(context);
+            dynamic val2 = _rightSide.Evaluate(context);
 
             if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
             {
@@ -397,16 +383,12 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public NotEqualExpression(IValue left, IValue right) : base(left, right)
         {
-            if (!(IsNumericType(left) && IsNumericType(right)) && !(IsLogicType(left) && IsLogicType(right)))
-            {
-                throw new Exception();
-            }
         }
 
         public override void Execute(Scope context)
         {
-            dynamic val1 = _leftSide.Evaluate();
-            dynamic val2 = _rightSide.Evaluate();
+            dynamic val1 = _leftSide.Evaluate(context);
+            dynamic val2 = _rightSide.Evaluate(context);
 
             if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
             {

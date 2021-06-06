@@ -22,9 +22,11 @@ namespace BGS_Interpreter.LanguageConcepts.Loops
         {
             var loopContext = new Scope(context);
 
-            while (_condition.Evaluate(context) is BaseTypes.Boolean result && result.Value)
+            while (_condition.Evaluate(loopContext) is BaseTypes.Boolean result && result.Value)
             {
-                _executables.ToList().ForEach(x => x.Execute(loopContext));
+                var innerContext = new Scope(loopContext);
+
+                _executables.ToList().ForEach(x => x.Execute(innerContext));
             }
         }
     }
@@ -33,16 +35,23 @@ namespace BGS_Interpreter.LanguageConcepts.Loops
     {
         private readonly VariableIdentifier _indexer;
 
-        private readonly IValue<BaseTypes.Integer> _start;
+        private readonly IValue _start;
 
-        private readonly IValue<BaseTypes.Integer> _end;
+        private readonly IValue _end;
 
-        private readonly IValue<BaseTypes.Integer> _step;
+        private readonly IValue _step;
 
         private readonly IReadOnlyCollection<IExecutable> _executables;
 
-        public ForLoop(VariableIdentifier variableIdentifier, IValue<BaseTypes.Integer> start, IValue<BaseTypes.Integer> end, IValue<BaseTypes.Integer> step, IExecutable[] executables)
+        private bool IsNumericType(IValue value) => value is BaseTypes.Integer or BaseTypes.Double;
+
+        public ForLoop(VariableIdentifier variableIdentifier, IValue start, IValue end, IValue step, IExecutable[] executables)
         {
+            if (!IsNumericType(start) || !IsNumericType(end) || !IsNumericType(step))
+            {
+                throw new Exception();
+            }
+
             _indexer = variableIdentifier;
             _start = start;
             _end = end;
@@ -54,29 +63,28 @@ namespace BGS_Interpreter.LanguageConcepts.Loops
         {
             var loopContext = new Scope(context);
 
-            loopContext.AddVariable(new Variable<BaseTypes.Integer>(_indexer.Name));
+            loopContext.AddVariable(new Variable<BaseTypes.Double>(_indexer.Name));
 
-            Func<int, int, bool> comparer = (a, b) => a < b;
-            if (_start.Evaluate() is BaseTypes.Integer startValue && _end.Evaluate() is BaseTypes.Integer endValue)
+            dynamic start = _start.Evaluate(context);
+            dynamic end = _end.Evaluate(context);
+            dynamic step = _step.Evaluate(context);
+
+            Func<double, double, bool> comparer = start switch
             {
-                if (startValue.Value < endValue.Value)
-                {
-                    comparer = (a, b) => a < b;
-                }
-                else
-                {
-                    comparer = (a, b) => b < a;
-                }
-            }
+                IValue when start.Value < end.Value => (a, b) => a < b,
+                _ => (a, b) => b < a,
+            };
 
-            var counter = loopContext.GetVariable(_indexer.Name);
-            counter.Assign(_start.Evaluate());
+            dynamic counter = loopContext.GetVariable(_indexer.Name);
+            counter.Assign(start.Evaluate(loopContext));
 
-            while (comparer.Invoke((counter.Evaluate() as BaseTypes.Integer).Value, (_end.Evaluate() as BaseTypes.Integer).Value))
+            while (comparer.Invoke(counter.Evaluate(loopContext).Value, end.Evaluate(loopContext).Value))
             {
-                _executables.ToList().ForEach(x => x.Execute(loopContext));
+                var innerContext = new Scope(loopContext);
 
-                counter.Assign(new BaseTypes.Integer((counter.Evaluate() as BaseTypes.Integer).Value + (_step.Evaluate() as BaseTypes.Integer).Value));
+                _executables.ToList().ForEach(x => x.Execute(innerContext));
+
+                counter.Assign(new BaseTypes.Double(counter.Evaluate(innerContext).Value + step.Evaluate(innerContext).Value));
             }
         }
     }

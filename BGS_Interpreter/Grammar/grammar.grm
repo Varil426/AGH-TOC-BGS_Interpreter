@@ -14,8 +14,7 @@ BooleanVal = False | True
 <Value> ::= StringVal | Integer | DoubleVal | Identifier | BooleanVal 
 <Number> ::= Integer | DoubleVal 
 
-<Statement> ::= <Declaration> <Statement> | <IfStatement> <Statement> | <WhileStatement> <Statement> | <ForStatement> <Statement> | <FuncStatment> <Statement> | ';' | return <Expression> ';' 
-             | <Expression> <Statement> | <PrintStmt> <Statement> | <Declaration> | <IfStatement> | <WhileStatement> | <ForStatement> | <FuncStatment> | <Expression> | <PrintStmt>
+<Statement> ::=  return <Expression> ';' | <Declaration> ';' | <IfStatement> | <WhileStatement> | <ForStatement> | <FuncStatment> | <Expression> ';' | <PrintStmt> ';'
 <Statements> ::= <Statement> <Statements> | <Statement>
 <PrintStmt> ::= 'print' '(' <Expression> ')'
 <IfStatement> ::= 'if' '(' <Expression> ')' '{' <Statements> '}' 
@@ -30,7 +29,7 @@ BooleanVal = False | True
                 | 'function' Identifier '('')' ':' <RetValue> '{' <Statements> '}'
 <Params> ::= <Declaration> | <Declaration> ',' <Params>  
 <Declaration> ::= 'int' Identifier  | 'double' Identifier | 'string' Identifier | 'boolean' Identifier     
-               | 'string' Identifier '=' <Expression>  | 'double' Identifier '=' <Expression> | 'int' Identifier '=' <Expression>     
+               | 'string' Identifier '=' <Expression>  | 'double' Identifier '=' <Expression> | 'int' Identifier '=' <Expression> | 'boolean' Identifier '=' <Expression>     
 <Expression> ::= <Expression> '>' <LogicExp>
                | <Expression> '<' <LogicExp>
                | <Expression> '>=' <LogicExp>
@@ -48,6 +47,7 @@ BooleanVal = False | True
 <MulExp> ::= <MulExp> '*' <Value>
            | <MulExp> '/' <Value>
            | <Value>
+           | '!' <Value>
            | <callFunc> 
 <toCallParam> ::= Identifier | Identifier ',' <toCallParam>
 <callFunc> ::= Identifier '(' <toCallParam> ')' | Identifier '(' ')' 

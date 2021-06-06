@@ -53,140 +53,135 @@ namespace BGS_Interpreter
 
     enum SymbolConstants : int
     {
-        SYMBOL_EOF            =  0, // (EOF)
-        SYMBOL_ERROR          =  1, // (Error)
-        SYMBOL_WHITESPACE     =  2, // Whitespace
-        SYMBOL_MINUS          =  3, // '-'
-        SYMBOL_EXCLAMEQ       =  4, // '!='
-        SYMBOL_AMPAMP         =  5, // '&&'
-        SYMBOL_LPAREN         =  6, // '('
-        SYMBOL_RPAREN         =  7, // ')'
-        SYMBOL_TIMES          =  8, // '*'
-        SYMBOL_COMMA          =  9, // ','
-        SYMBOL_DIV            = 10, // '/'
-        SYMBOL_COLON          = 11, // ':'
-        SYMBOL_SEMI           = 12, // ';'
-        SYMBOL_LBRACE         = 13, // '{'
-        SYMBOL_PIPEPIPE       = 14, // '||'
-        SYMBOL_RBRACE         = 15, // '}'
-        SYMBOL_PLUS           = 16, // '+'
-        SYMBOL_LT             = 17, // '<'
-        SYMBOL_LTEQ           = 18, // '<='
-        SYMBOL_EQ             = 19, // '='
-        SYMBOL_EQEQ           = 20, // '=='
-        SYMBOL_GT             = 21, // '>'
-        SYMBOL_GTEQ           = 22, // '>='
-        SYMBOL_BOOLEAN        = 23, // boolean
-        SYMBOL_BOOLEANVAL     = 24, // BooleanVal
-        SYMBOL_DOUBLE         = 25, // double
-        SYMBOL_DOUBLEVAL      = 26, // DoubleVal
-        SYMBOL_ELSE           = 27, // else
-        SYMBOL_FOR            = 28, // for
-        SYMBOL_FUNCTION       = 29, // function
-        SYMBOL_IDENTIFIER     = 30, // Identifier
-        SYMBOL_IF             = 31, // if
-        SYMBOL_IN             = 32, // in
-        SYMBOL_INT            = 33, // int
-        SYMBOL_INTEGER        = 34, // Integer
-        SYMBOL_PRINT          = 35, // print
-        SYMBOL_RETURN         = 36, // return
-        SYMBOL_STRING         = 37, // string
-        SYMBOL_STRINGVAL      = 38, // StringVal
-        SYMBOL_WHILE          = 39, // while
-        SYMBOL_ADDEXP         = 40, // <AddExp>
-        SYMBOL_CALLFUNC       = 41, // <callFunc>
-        SYMBOL_DECLARATION    = 42, // <Declaration>
-        SYMBOL_EXPRESSION     = 43, // <Expression>
-        SYMBOL_FORSTATEMENT   = 44, // <ForStatement>
-        SYMBOL_FUNCSTATMENT   = 45, // <FuncStatment>
-        SYMBOL_IFSTATEMENT    = 46, // <IfStatement>
-        SYMBOL_LOGICEXP       = 47, // <LogicExp>
-        SYMBOL_MULEXP         = 48, // <MulExp>
-        SYMBOL_NUMBER         = 49, // <Number>
-        SYMBOL_PARAMS         = 50, // <Params>
-        SYMBOL_PRINTSTMT      = 51, // <PrintStmt>
-        SYMBOL_PROGRAM        = 52, // <Program>
-        SYMBOL_RETVALUE       = 53, // <RetValue>
-        SYMBOL_STATEMENT      = 54, // <Statement>
-        SYMBOL_STATEMENTS     = 55, // <Statements>
-        SYMBOL_TOCALLPARAM    = 56, // <toCallParam>
-        SYMBOL_VALUE          = 57, // <Value>
-        SYMBOL_WHILESTATEMENT = 58  // <WhileStatement>
+        SYMBOL_EOF            =  0, // (EOF)	
+        SYMBOL_ERROR          =  1, // (Error)	
+        SYMBOL_WHITESPACE     =  2, // Whitespace	
+        SYMBOL_MINUS          =  3, // '-'	
+        SYMBOL_EXCLAM         =  4, // '!'	
+        SYMBOL_EXCLAMEQ       =  5, // '!='	
+        SYMBOL_AMPAMP         =  6, // '&&'	
+        SYMBOL_LPAREN         =  7, // '('	
+        SYMBOL_RPAREN         =  8, // ')'	
+        SYMBOL_TIMES          =  9, // '*'	
+        SYMBOL_COMMA          = 10, // ','	
+        SYMBOL_DIV            = 11, // '/'	
+        SYMBOL_COLON          = 12, // ':'	
+        SYMBOL_SEMI           = 13, // ';'	
+        SYMBOL_LBRACE         = 14, // '{'	
+        SYMBOL_PIPEPIPE       = 15, // '||'	
+        SYMBOL_RBRACE         = 16, // '}'	
+        SYMBOL_PLUS           = 17, // '+'	
+        SYMBOL_LT             = 18, // '<'	
+        SYMBOL_LTEQ           = 19, // '<='	
+        SYMBOL_EQ             = 20, // '='	
+        SYMBOL_EQEQ           = 21, // '=='	
+        SYMBOL_GT             = 22, // '>'	
+        SYMBOL_GTEQ           = 23, // '>='	
+        SYMBOL_BOOLEAN        = 24, // boolean	
+        SYMBOL_BOOLEANVAL     = 25, // BooleanVal	
+        SYMBOL_DOUBLE         = 26, // double	
+        SYMBOL_DOUBLEVAL      = 27, // DoubleVal	
+        SYMBOL_ELSE           = 28, // else	
+        SYMBOL_FOR            = 29, // for	
+        SYMBOL_FUNCTION       = 30, // function	
+        SYMBOL_IDENTIFIER     = 31, // Identifier	
+        SYMBOL_IF             = 32, // if	
+        SYMBOL_IN             = 33, // in	
+        SYMBOL_INT            = 34, // int	
+        SYMBOL_INTEGER        = 35, // Integer	
+        SYMBOL_PRINT          = 36, // print	
+        SYMBOL_RETURN         = 37, // return	
+        SYMBOL_STRING         = 38, // string	
+        SYMBOL_STRINGVAL      = 39, // StringVal	
+        SYMBOL_WHILE          = 40, // while	
+        SYMBOL_ADDEXP         = 41, // <AddExp>	
+        SYMBOL_CALLFUNC       = 42, // <callFunc>	
+        SYMBOL_DECLARATION    = 43, // <Declaration>	
+        SYMBOL_EXPRESSION     = 44, // <Expression>	
+        SYMBOL_FORSTATEMENT   = 45, // <ForStatement>	
+        SYMBOL_FUNCSTATMENT   = 46, // <FuncStatment>	
+        SYMBOL_IFSTATEMENT    = 47, // <IfStatement>	
+        SYMBOL_LOGICEXP       = 48, // <LogicExp>	
+        SYMBOL_MULEXP         = 49, // <MulExp>	
+        SYMBOL_NUMBER         = 50, // <Number>	
+        SYMBOL_PARAMS         = 51, // <Params>	
+        SYMBOL_PRINTSTMT      = 52, // <PrintStmt>	
+        SYMBOL_PROGRAM        = 53, // <Program>	
+        SYMBOL_RETVALUE       = 54, // <RetValue>	
+        SYMBOL_STATEMENT      = 55, // <Statement>	
+        SYMBOL_STATEMENTS     = 56, // <Statements>	
+        SYMBOL_TOCALLPARAM    = 57, // <toCallParam>	
+        SYMBOL_VALUE          = 58, // <Value>	
+        SYMBOL_WHILESTATEMENT = 59  // <WhileStatement>
     };
 
     enum RuleConstants : int
     {
-        RULE_PROGRAM                                                                =  0, // <Program> ::= <Statements>
-        RULE_VALUE_STRINGVAL                                                        =  1, // <Value> ::= StringVal
-        RULE_VALUE_INTEGER                                                          =  2, // <Value> ::= Integer
-        RULE_VALUE_DOUBLEVAL                                                        =  3, // <Value> ::= DoubleVal
-        RULE_VALUE_IDENTIFIER                                                       =  4, // <Value> ::= Identifier
-        RULE_VALUE_BOOLEANVAL                                                       =  5, // <Value> ::= BooleanVal
-        RULE_NUMBER_INTEGER                                                         =  6, // <Number> ::= Integer
-        RULE_NUMBER_DOUBLEVAL                                                       =  7, // <Number> ::= DoubleVal
-        RULE_STATEMENT                                                              =  8, // <Statement> ::= <Declaration> <Statement>
-        RULE_STATEMENT2                                                             =  9, // <Statement> ::= <IfStatement> <Statement>
-        RULE_STATEMENT3                                                             = 10, // <Statement> ::= <WhileStatement> <Statement>
-        RULE_STATEMENT4                                                             = 11, // <Statement> ::= <ForStatement> <Statement>
-        RULE_STATEMENT5                                                             = 12, // <Statement> ::= <FuncStatment> <Statement>
-        RULE_STATEMENT_SEMI                                                         = 13, // <Statement> ::= ';'
-        RULE_STATEMENT_RETURN_SEMI                                                  = 14, // <Statement> ::= return <Expression> ';'
-        RULE_STATEMENT6                                                             = 15, // <Statement> ::= <Expression> <Statement>
-        RULE_STATEMENT7                                                             = 16, // <Statement> ::= <PrintStmt> <Statement>
-        RULE_STATEMENT8                                                             = 17, // <Statement> ::= <Declaration>
-        RULE_STATEMENT9                                                             = 18, // <Statement> ::= <IfStatement>
-        RULE_STATEMENT10                                                            = 19, // <Statement> ::= <WhileStatement>
-        RULE_STATEMENT11                                                            = 20, // <Statement> ::= <ForStatement>
-        RULE_STATEMENT12                                                            = 21, // <Statement> ::= <FuncStatment>
-        RULE_STATEMENT13                                                            = 22, // <Statement> ::= <Expression>
-        RULE_STATEMENT14                                                            = 23, // <Statement> ::= <PrintStmt>
-        RULE_STATEMENTS                                                             = 24, // <Statements> ::= <Statement> <Statements>
-        RULE_STATEMENTS2                                                            = 25, // <Statements> ::= <Statement>
-        RULE_PRINTSTMT_PRINT_LPAREN_RPAREN                                          = 26, // <PrintStmt> ::= print '(' <Expression> ')'
-        RULE_IFSTATEMENT_IF_LPAREN_RPAREN_LBRACE_RBRACE                             = 27, // <IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}'
-        RULE_IFSTATEMENT_IF_LPAREN_RPAREN_LBRACE_RBRACE_ELSE_LBRACE_RBRACE          = 28, // <IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}' else '{' <Statements> '}'
-        RULE_FORSTATEMENT_FOR_IDENTIFIER_IN_LPAREN_COMMA_RPAREN_LBRACE_RBRACE       = 29, // <ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ')' '{' <Statements> '}'
-        RULE_FORSTATEMENT_FOR_IDENTIFIER_IN_LPAREN_COMMA_COMMA_RPAREN_LBRACE_RBRACE = 30, // <ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ',' <Number> ')' '{' <Statements> '}'
-        RULE_WHILESTATEMENT_WHILE_LPAREN_RPAREN_LBRACE_RBRACE                       = 31, // <WhileStatement> ::= while '(' <Expression> ')' '{' <Statements> '}'
-        RULE_RETVALUE_INT                                                           = 32, // <RetValue> ::= int
-        RULE_RETVALUE_DOUBLE                                                        = 33, // <RetValue> ::= double
-        RULE_RETVALUE_STRING                                                        = 34, // <RetValue> ::= string
-        RULE_RETVALUE_BOOLEAN                                                       = 35, // <RetValue> ::= boolean
-        RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_LBRACE_RBRACE           = 36, // <FuncStatment> ::= function Identifier '(' <Params> ')' '{' <Statements> '}'
-        RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_LBRACE_RBRACE2          = 37, // <FuncStatment> ::= function Identifier '(' ')' '{' <Statements> '}'
-        RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_COLON_LBRACE_RBRACE     = 38, // <FuncStatment> ::= function Identifier '(' <Params> ')' ':' <RetValue> '{' <Statements> '}'
-        RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_COLON_LBRACE_RBRACE2    = 39, // <FuncStatment> ::= function Identifier '(' ')' ':' <RetValue> '{' <Statements> '}'
-        RULE_PARAMS                                                                 = 40, // <Params> ::= <Declaration>
-        RULE_PARAMS_COMMA                                                           = 41, // <Params> ::= <Declaration> ',' <Params>
-        RULE_DECLARATION_INT_IDENTIFIER                                             = 42, // <Declaration> ::= int Identifier
-        RULE_DECLARATION_DOUBLE_IDENTIFIER                                          = 43, // <Declaration> ::= double Identifier
-        RULE_DECLARATION_STRING_IDENTIFIER                                          = 44, // <Declaration> ::= string Identifier
-        RULE_DECLARATION_BOOLEAN_BOOLEANVAL                                         = 45, // <Declaration> ::= boolean BooleanVal
-        RULE_DECLARATION_STRING_IDENTIFIER_EQ                                       = 46, // <Declaration> ::= string Identifier '=' <Expression>
-        RULE_DECLARATION_DOUBLE_IDENTIFIER_EQ                                       = 47, // <Declaration> ::= double Identifier '=' <Expression>
-        RULE_DECLARATION_INT_IDENTIFIER_EQ                                          = 48, // <Declaration> ::= int Identifier '=' <Expression>
-        RULE_EXPRESSION_GT                                                          = 49, // <Expression> ::= <Expression> '>' <LogicExp>
-        RULE_EXPRESSION_LT                                                          = 50, // <Expression> ::= <Expression> '<' <LogicExp>
-        RULE_EXPRESSION_GTEQ                                                        = 51, // <Expression> ::= <Expression> '>=' <LogicExp>
-        RULE_EXPRESSION_LTEQ                                                        = 52, // <Expression> ::= <Expression> '<=' <LogicExp>
-        RULE_EXPRESSION_EQEQ                                                        = 53, // <Expression> ::= <Expression> '==' <LogicExp>
-        RULE_EXPRESSION_EXCLAMEQ                                                    = 54, // <Expression> ::= <Expression> '!=' <LogicExp>
-        RULE_EXPRESSION_EQ                                                          = 55, // <Expression> ::= <Expression> '=' <LogicExp>
-        RULE_EXPRESSION                                                             = 56, // <Expression> ::= <LogicExp>
-        RULE_LOGICEXP_AMPAMP                                                        = 57, // <LogicExp> ::= <LogicExp> '&&' <AddExp>
-        RULE_LOGICEXP_PIPEPIPE                                                      = 58, // <LogicExp> ::= <LogicExp> '||' <AddExp>
-        RULE_LOGICEXP                                                               = 59, // <LogicExp> ::= <AddExp>
-        RULE_ADDEXP_PLUS                                                            = 60, // <AddExp> ::= <AddExp> '+' <MulExp>
-        RULE_ADDEXP_MINUS                                                           = 61, // <AddExp> ::= <AddExp> '-' <MulExp>
-        RULE_ADDEXP                                                                 = 62, // <AddExp> ::= <MulExp>
-        RULE_MULEXP_TIMES                                                           = 63, // <MulExp> ::= <MulExp> '*' <Value>
-        RULE_MULEXP_DIV                                                             = 64, // <MulExp> ::= <MulExp> '/' <Value>
-        RULE_MULEXP                                                                 = 65, // <MulExp> ::= <Value>
-        RULE_MULEXP2                                                                = 66, // <MulExp> ::= <callFunc>
-        RULE_TOCALLPARAM_IDENTIFIER                                                 = 67, // <toCallParam> ::= Identifier
-        RULE_TOCALLPARAM_IDENTIFIER_COMMA                                           = 68, // <toCallParam> ::= Identifier ',' <toCallParam>
-        RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN                                      = 69, // <callFunc> ::= Identifier '(' <toCallParam> ')'
-        RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN2                                     = 70  // <callFunc> ::= Identifier '(' ')'
+        RULE_PROGRAM                                                                =  0, // <Program> ::= <Statements>	
+        RULE_VALUE_STRINGVAL                                                        =  1, // <Value> ::= StringVal	
+        RULE_VALUE_INTEGER                                                          =  2, // <Value> ::= Integer	
+        RULE_VALUE_DOUBLEVAL                                                        =  3, // <Value> ::= DoubleVal	
+        RULE_VALUE_IDENTIFIER                                                       =  4, // <Value> ::= Identifier	
+        RULE_VALUE_BOOLEANVAL                                                       =  5, // <Value> ::= BooleanVal	
+        RULE_NUMBER_INTEGER                                                         =  6, // <Number> ::= Integer	
+        RULE_NUMBER_DOUBLEVAL                                                       =  7, // <Number> ::= DoubleVal	
+        RULE_STATEMENT_RETURN_SEMI                                                  =  8, // <Statement> ::= return <Expression> ';'	
+        RULE_STATEMENT_SEMI                                                         =  9, // <Statement> ::= <Declaration> ';'	
+        RULE_STATEMENT                                                              = 10, // <Statement> ::= <IfStatement>	
+        RULE_STATEMENT2                                                             = 11, // <Statement> ::= <WhileStatement>	
+        RULE_STATEMENT3                                                             = 12, // <Statement> ::= <ForStatement>	
+        RULE_STATEMENT4                                                             = 13, // <Statement> ::= <FuncStatment>	
+        RULE_STATEMENT_SEMI2                                                        = 14, // <Statement> ::= <Expression> ';'	
+        RULE_STATEMENT_SEMI3                                                        = 15, // <Statement> ::= <PrintStmt> ';'	
+        RULE_STATEMENTS                                                             = 16, // <Statements> ::= <Statement> <Statements>	
+        RULE_STATEMENTS2                                                            = 17, // <Statements> ::= <Statement>	
+        RULE_PRINTSTMT_PRINT_LPAREN_RPAREN                                          = 18, // <PrintStmt> ::= print '(' <Expression> ')'	
+        RULE_IFSTATEMENT_IF_LPAREN_RPAREN_LBRACE_RBRACE                             = 19, // <IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}'	
+        RULE_IFSTATEMENT_IF_LPAREN_RPAREN_LBRACE_RBRACE_ELSE_LBRACE_RBRACE          = 20, // <IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}' else '{' <Statements> '}'	
+        RULE_FORSTATEMENT_FOR_IDENTIFIER_IN_LPAREN_COMMA_RPAREN_LBRACE_RBRACE       = 21, // <ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ')' '{' <Statements> '}'	
+        RULE_FORSTATEMENT_FOR_IDENTIFIER_IN_LPAREN_COMMA_COMMA_RPAREN_LBRACE_RBRACE = 22, // <ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ',' <Number> ')' '{' <Statements> '}'	
+        RULE_WHILESTATEMENT_WHILE_LPAREN_RPAREN_LBRACE_RBRACE                       = 23, // <WhileStatement> ::= while '(' <Expression> ')' '{' <Statements> '}'	
+        RULE_RETVALUE_INT                                                           = 24, // <RetValue> ::= int	
+        RULE_RETVALUE_DOUBLE                                                        = 25, // <RetValue> ::= double	
+        RULE_RETVALUE_STRING                                                        = 26, // <RetValue> ::= string	
+        RULE_RETVALUE_BOOLEAN                                                       = 27, // <RetValue> ::= boolean	
+        RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_LBRACE_RBRACE           = 28, // <FuncStatment> ::= function Identifier '(' <Params> ')' '{' <Statements> '}'	
+        RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_LBRACE_RBRACE2          = 29, // <FuncStatment> ::= function Identifier '(' ')' '{' <Statements> '}'	
+        RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_COLON_LBRACE_RBRACE     = 30, // <FuncStatment> ::= function Identifier '(' <Params> ')' ':' <RetValue> '{' <Statements> '}'	
+        RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_COLON_LBRACE_RBRACE2    = 31, // <FuncStatment> ::= function Identifier '(' ')' ':' <RetValue> '{' <Statements> '}'	
+        RULE_PARAMS                                                                 = 32, // <Params> ::= <Declaration>	
+        RULE_PARAMS_COMMA                                                           = 33, // <Params> ::= <Declaration> ',' <Params>	
+        RULE_DECLARATION_INT_IDENTIFIER                                             = 34, // <Declaration> ::= int Identifier	
+        RULE_DECLARATION_DOUBLE_IDENTIFIER                                          = 35, // <Declaration> ::= double Identifier	
+        RULE_DECLARATION_STRING_IDENTIFIER                                          = 36, // <Declaration> ::= string Identifier	
+        RULE_DECLARATION_BOOLEAN_IDENTIFIER                                         = 37, // <Declaration> ::= boolean Identifier	
+        RULE_DECLARATION_STRING_IDENTIFIER_EQ                                       = 38, // <Declaration> ::= string Identifier '=' <Expression>	
+        RULE_DECLARATION_DOUBLE_IDENTIFIER_EQ                                       = 39, // <Declaration> ::= double Identifier '=' <Expression>	
+        RULE_DECLARATION_INT_IDENTIFIER_EQ                                          = 40, // <Declaration> ::= int Identifier '=' <Expression>	
+        RULE_DECLARATION_BOOLEAN_IDENTIFIER_EQ                                      = 41, // <Declaration> ::= boolean Identifier '=' <Expression>	
+        RULE_EXPRESSION_GT                                                          = 42, // <Expression> ::= <Expression> '>' <LogicExp>	
+        RULE_EXPRESSION_LT                                                          = 43, // <Expression> ::= <Expression> '<' <LogicExp>	
+        RULE_EXPRESSION_GTEQ                                                        = 44, // <Expression> ::= <Expression> '>=' <LogicExp>	
+        RULE_EXPRESSION_LTEQ                                                        = 45, // <Expression> ::= <Expression> '<=' <LogicExp>	
+        RULE_EXPRESSION_EQEQ                                                        = 46, // <Expression> ::= <Expression> '==' <LogicExp>	
+        RULE_EXPRESSION_EXCLAMEQ                                                    = 47, // <Expression> ::= <Expression> '!=' <LogicExp>	
+        RULE_EXPRESSION_EQ                                                          = 48, // <Expression> ::= <Expression> '=' <LogicExp>	
+        RULE_EXPRESSION                                                             = 49, // <Expression> ::= <LogicExp>	
+        RULE_LOGICEXP_AMPAMP                                                        = 50, // <LogicExp> ::= <LogicExp> '&&' <AddExp>	
+        RULE_LOGICEXP_PIPEPIPE                                                      = 51, // <LogicExp> ::= <LogicExp> '||' <AddExp>	
+        RULE_LOGICEXP                                                               = 52, // <LogicExp> ::= <AddExp>	
+        RULE_ADDEXP_PLUS                                                            = 53, // <AddExp> ::= <AddExp> '+' <MulExp>	
+        RULE_ADDEXP_MINUS                                                           = 54, // <AddExp> ::= <AddExp> '-' <MulExp>	
+        RULE_ADDEXP                                                                 = 55, // <AddExp> ::= <MulExp>	
+        RULE_MULEXP_TIMES                                                           = 56, // <MulExp> ::= <MulExp> '*' <Value>	
+        RULE_MULEXP_DIV                                                             = 57, // <MulExp> ::= <MulExp> '/' <Value>	
+        RULE_MULEXP                                                                 = 58, // <MulExp> ::= <Value>	
+        RULE_MULEXP_EXCLAM                                                          = 59, // <MulExp> ::= '!' <Value>	
+        RULE_MULEXP2                                                                = 60, // <MulExp> ::= <callFunc>	
+        RULE_TOCALLPARAM_IDENTIFIER                                                 = 61, // <toCallParam> ::= Identifier	
+        RULE_TOCALLPARAM_IDENTIFIER_COMMA                                           = 62, // <toCallParam> ::= Identifier ',' <toCallParam>	
+        RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN                                      = 63, // <callFunc> ::= Identifier '(' <toCallParam> ')'	
+        RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN2                                     = 64  // <callFunc> ::= Identifier '(' ')'
     };
 
     internal class MyParser
@@ -278,6 +273,11 @@ namespace BGS_Interpreter
 
                 case (int)SymbolConstants.SYMBOL_MINUS :
                 //'-'
+                //todo: Create a new object that corresponds to the symbol
+                return null;
+
+                case (int)SymbolConstants.SYMBOL_EXCLAM:
+                //'!'
                 //todo: Create a new object that corresponds to the symbol
                 return null;
 
@@ -630,7 +630,14 @@ namespace BGS_Interpreter
                 //todo: Create a new object using the stored tokens.
                 return null;
 
-                case (int)RuleConstants.RULE_STATEMENT :
+                case (int)RuleConstants.RULE_STATEMENT_RETURN_SEMI :
+                //<Statement> ::= return <Expression> ';'
+                //todo: Create a new object using the stored tokens.
+                return null;
+
+                case (int)RuleConstants.RULE_STATEMENT_SEMI :
+                    //<Statement> ::= <Declaration> ';'
+                    //todo: Create a new object using the stored tokens.
                     {
                         //<Statement> ::= <Declaration> <Statement>
                         //todo: Create a new object using the stored tokens.
@@ -650,80 +657,35 @@ namespace BGS_Interpreter
                         return executablesList;
                     }
 
-                case (int)RuleConstants.RULE_STATEMENT2 :
-                //<Statement> ::= <IfStatement> <Statement>
-                //todo: Create a new object using the stored tokens.
-                return null;
-
-                case (int)RuleConstants.RULE_STATEMENT3 :
-                //<Statement> ::= <WhileStatement> <Statement>
-                //todo: Create a new object using the stored tokens.
-                return null;
-
-                case (int)RuleConstants.RULE_STATEMENT4 :
-                //<Statement> ::= <ForStatement> <Statement>
-                //todo: Create a new object using the stored tokens.
-                return null;
-
-                case (int)RuleConstants.RULE_STATEMENT5 :
-                //<Statement> ::= <FuncStatment> <Statement>
-                //todo: Create a new object using the stored tokens.
-                return null;
-
-                case (int)RuleConstants.RULE_STATEMENT_SEMI :
-                //<Statement> ::= ';'
-                //todo: Create a new object using the stored tokens.
-                return null;
-
-                case (int)RuleConstants.RULE_STATEMENT_RETURN_SEMI :
-                //<Statement> ::= return <Expression> ';'
-                //todo: Create a new object using the stored tokens.
-                return null;
-
-                case (int)RuleConstants.RULE_STATEMENT6 :
-                //<Statement> ::= <Expression> <Statement>
-                //todo: Create a new object using the stored tokens.
-                return CreateObject(token.Tokens[0]);
-
-                case (int)RuleConstants.RULE_STATEMENT7 :
-                //<Statement> ::= <PrintStmt> <Statement>
-                //todo: Create a new object using the stored tokens.
-                    return CreateObject(token.Tokens[0]);
-
-                case (int)RuleConstants.RULE_STATEMENT8 :
-                //<Statement> ::= <Declaration>
-                //todo: Create a new object using the stored tokens.
-                return null;
-
-                case (int)RuleConstants.RULE_STATEMENT9 :
+                case (int)RuleConstants.RULE_STATEMENT :
                 //<Statement> ::= <IfStatement>
                 //todo: Create a new object using the stored tokens.
                 return null;
 
-                case (int)RuleConstants.RULE_STATEMENT10 :
+                case (int)RuleConstants.RULE_STATEMENT2 :
                     //<Statement> ::= <WhileStatement>
                     //todo: Create a new object using the stored tokens.
                     return CreateObject(token.Tokens[0]);
 
-                case (int)RuleConstants.RULE_STATEMENT11 :
+                case (int)RuleConstants.RULE_STATEMENT3 :
                 //<Statement> ::= <ForStatement>
                 //todo: Create a new object using the stored tokens.
                 return null;
 
-                case (int)RuleConstants.RULE_STATEMENT12 :
+                case (int)RuleConstants.RULE_STATEMENT4 :
                 //<Statement> ::= <FuncStatment>
                 //todo: Create a new object using the stored tokens.
                 return null;
 
-                case (int)RuleConstants.RULE_STATEMENT13 :
-                //<Statement> ::= <Expression>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                case (int)RuleConstants.RULE_STATEMENT_SEMI2 :
+                    //<Statement> ::= <Expression> ';'
+                    //todo: Create a new object using the stored tokens.
+                    return CreateObject(token.Tokens[0]);
 
-                case (int)RuleConstants.RULE_STATEMENT14 :
-                //<Statement> ::= <PrintStmt>
+                case (int)RuleConstants.RULE_STATEMENT_SEMI3 :
+                //<Statement> ::= <PrintStmt> ';'
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_STATEMENTS :
                     {
@@ -896,8 +858,8 @@ namespace BGS_Interpreter
                         return new VariableDeclaration<LanguageConcepts.BaseTypes.String>(new LanguageConcepts.BaseTypes.String(string.Empty), name);
                     }
 
-                case (int)RuleConstants.RULE_DECLARATION_BOOLEAN_BOOLEANVAL :
-                    //<Declaration> ::= boolean BooleanVal
+                case (int)RuleConstants.RULE_DECLARATION_BOOLEAN_IDENTIFIER :
+                    //<Declaration> ::= boolean Identifier
                     //todo: Create a new object using the stored tokens.
                     {
                         var name = token.Tokens[1].ToString();
@@ -946,6 +908,11 @@ namespace BGS_Interpreter
                         }
                         throw new Exception();
                     }
+
+                case (int)RuleConstants.RULE_DECLARATION_BOOLEAN_IDENTIFIER_EQ:
+                    //<Declaration> ::= boolean Identifier '=' <Expression>
+                    //todo: Create a new object using the stored tokens.
+                    return null;
 
                 case (int)RuleConstants.RULE_EXPRESSION_GT :
                     //<Expression> ::= <Expression> '>' <LogicExp>
@@ -1170,6 +1137,11 @@ namespace BGS_Interpreter
                     //<MulExp> ::= <Value>
                     //todo: Create a new object using the stored tokens.
                     return CreateObject(token.Tokens[0]);
+
+                case (int)RuleConstants.RULE_MULEXP_EXCLAM:
+                    //<MulExp> ::= '!' <Value>
+                    //todo: Create a new object using the stored tokens.
+                    return null;
 
                 case (int)RuleConstants.RULE_MULEXP2 :
                 //<MulExp> ::= <callFunc>

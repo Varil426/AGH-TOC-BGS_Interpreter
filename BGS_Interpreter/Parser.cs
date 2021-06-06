@@ -896,34 +896,76 @@ namespace BGS_Interpreter
                     }
 
                 case (int)RuleConstants.RULE_EXPRESSION_GT :
-                //<Expression> ::= <Expression> '>' <LogicExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Expression> ::= <Expression> '>' <LogicExp>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        if (CreateObject(token.Tokens[0]) is IValue left && CreateObject(token.Tokens[2]) is IValue right)
+                        {
+                            return new NumberGreaterExpression(left, right);
+                        }
+                        throw new Exception();
+
+                    }
 
                 case (int)RuleConstants.RULE_EXPRESSION_LT :
-                //<Expression> ::= <Expression> '<' <LogicExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Expression> ::= <Expression> '<' <LogicExp>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        if (CreateObject(token.Tokens[0]) is IValue left && CreateObject(token.Tokens[2]) is IValue right)
+                        {
+                            return new NumberLessExpression(left, right);
+                        }
+                        throw new Exception();
+                        
+                    }
 
                 case (int)RuleConstants.RULE_EXPRESSION_GTEQ :
-                //<Expression> ::= <Expression> '>=' <LogicExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Expression> ::= <Expression> '>=' <LogicExp>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        if (CreateObject(token.Tokens[0]) is IValue left && CreateObject(token.Tokens[2]) is IValue right)
+                        {
+                            return new NumberGreaterOrEqualExpression(left, right);
+                        }
+                        throw new Exception();
+
+                    }
 
                 case (int)RuleConstants.RULE_EXPRESSION_LTEQ :
-                //<Expression> ::= <Expression> '<=' <LogicExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Expression> ::= <Expression> '<=' <LogicExp>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        if (CreateObject(token.Tokens[0]) is IValue left && CreateObject(token.Tokens[2]) is IValue right)
+                        {
+                            return new NumberLessOrEqualExpression(left, right);
+                        }
+                        throw new Exception();
+
+                    }
 
                 case (int)RuleConstants.RULE_EXPRESSION_EQEQ :
-                //<Expression> ::= <Expression> '==' <LogicExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Expression> ::= <Expression> '==' <LogicExp>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        if (CreateObject(token.Tokens[0]) is IValue left && CreateObject(token.Tokens[2]) is IValue right)
+                        {
+                            return new EqualExpression(left, right);
+                        }
+                        throw new Exception();
+
+                    }
 
                 case (int)RuleConstants.RULE_EXPRESSION_EXCLAMEQ :
-                //<Expression> ::= <Expression> '!=' <LogicExp>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Expression> ::= <Expression> '!=' <LogicExp>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        if (CreateObject(token.Tokens[0]) is IValue left && CreateObject(token.Tokens[2]) is IValue right)
+                        {
+                            return new NotEqualExpression(left, right);
+                        }
+                        throw new Exception();
+
+                    }
 
                 case (int)RuleConstants.RULE_EXPRESSION_EQ :
                     //<Expression> ::= <Expression> '=' <LogicExp>

@@ -60,10 +60,28 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
     internal abstract class MathExpression<T> : Expression<T> where T : BaseTypes.Type
     {
-        protected IValue<T> _leftSide;
-        protected IValue<T> _rightSide;
+        protected IValue _leftSide;
+        protected IValue _rightSide;
 
-        public MathExpression(IValue<T> left, IValue<T> right)
+        protected bool IsNumericType(IValue value)
+        {
+            if (value is IValue<BaseTypes.Integer> or IValue<BaseTypes.Double>)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        protected bool IsLogicType(IValue value)
+        {
+            if (value is IValue<BaseTypes.Boolean>)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public MathExpression(IValue left, IValue right)
         {
             _leftSide = left;
             _rightSide = right;
@@ -72,8 +90,12 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
     internal class AdditionExpression<T> : MathExpression<T> where T : BaseTypes.Type
     {
-        public AdditionExpression(IValue<T> left, IValue<T> right) : base(left, right)
+        public AdditionExpression(IValue left, IValue right) : base(left, right)
         {
+            if (!(IsNumericType(left) && IsNumericType(right)))
+            {
+                throw new Exception();
+            }
         }
 
         public override void Execute(Scope context)
@@ -103,8 +125,12 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
     internal class SubtractionExpression<T> : MathExpression<T> where T : BaseTypes.Type
     {
-        public SubtractionExpression(IValue<T> left, IValue<T> right) : base(left, right)
+        public SubtractionExpression(IValue left, IValue right) : base(left, right)
         {
+            if (!(IsNumericType(left) && IsNumericType(right)))
+            {
+                throw new Exception();
+            }
         }
 
         public override void Execute(Scope context)
@@ -131,8 +157,12 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
     internal class MultiplicationExpression<T> : MathExpression<T> where T : BaseTypes.Type
     {
-        public MultiplicationExpression(IValue<T> left, IValue<T> right) : base(left, right)
+        public MultiplicationExpression(IValue left, IValue right) : base(left, right)
         {
+            if (!(IsNumericType(left) && IsNumericType(right)))
+            {
+                throw new Exception();
+            }
         }
 
         public override void Execute(Scope context)
@@ -159,8 +189,12 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
 
     internal class DivisionExpression<T> : MathExpression<T> where T : BaseTypes.Type
     {
-        public DivisionExpression(IValue<T> left, IValue<T> right) : base(left, right)
+        public DivisionExpression(IValue left, IValue right) : base(left, right)
         {
+            if (!(IsNumericType(left) && IsNumericType(right)))
+            {
+                throw new Exception();
+            }
         }
 
         public override void Execute(Scope context)
@@ -197,6 +231,10 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public LogicalAndExpression(IValue<BaseTypes.Boolean> left, IValue<BaseTypes.Boolean> right) : base(left, right)
         {
+            if (!(IsLogicType(left) && IsLogicType(right)))
+            {
+                throw new Exception();
+            }
         }
 
         public override void Execute(Scope context)
@@ -211,6 +249,10 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
     {
         public LogicalOrExpression(IValue<BaseTypes.Boolean> left, IValue<BaseTypes.Boolean> right) : base(left, right)
         {
+            if (!(IsLogicType(left) && IsLogicType(right)))
+            {
+                throw new Exception();
+            }
         }
 
         public override void Execute(Scope context)
@@ -218,6 +260,162 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
             var val1 = _leftSide.Evaluate() as BaseTypes.Boolean;
             var val2 = _rightSide.Evaluate() as BaseTypes.Boolean;
             _returnValue = new BaseTypes.Boolean(val1.Value || val2.Value);
+        }
+    }
+
+    internal class NumberLessExpression : MathExpression<BaseTypes.Boolean>
+    {
+        public NumberLessExpression(IValue left, IValue right) : base(left, right)
+        {
+            if (!(IsNumericType(left) && IsNumericType(right)))
+            {
+                throw new Exception();
+            }
+        }
+
+        public override void Execute(Scope context)
+        {
+            dynamic val1 = _leftSide.Evaluate();
+            dynamic val2 = _rightSide.Evaluate();
+
+            if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
+            {
+                _returnValue = new BaseTypes.Boolean(val1.Value < val2.Value);
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+    }
+
+    internal class NumberGreaterExpression : MathExpression<BaseTypes.Boolean>
+    {
+        public NumberGreaterExpression(IValue left, IValue right) : base(left, right)
+        {
+            if (!(IsNumericType(left) && IsNumericType(right)))
+            {
+                throw new Exception();
+            }
+        }
+
+        public override void Execute(Scope context)
+        {
+            dynamic val1 = _leftSide.Evaluate();
+            dynamic val2 = _rightSide.Evaluate();
+
+            if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
+            {
+                _returnValue = new BaseTypes.Boolean(val1.Value > val2.Value);
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+    }
+
+    internal class NumberLessOrEqualExpression : MathExpression<BaseTypes.Boolean>
+    {
+        public NumberLessOrEqualExpression(IValue left, IValue right) : base(left, right)
+        {
+            if (!(IsNumericType(left) && IsNumericType(right)))
+            {
+                throw new Exception();
+            }
+        }
+
+        public override void Execute(Scope context)
+        {
+            dynamic val1 = _leftSide.Evaluate();
+            dynamic val2 = _rightSide.Evaluate();
+
+            if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
+            {
+                _returnValue = new BaseTypes.Boolean(val1.Value <= val2.Value);
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+    }
+
+    internal class NumberGreaterOrEqualExpression : MathExpression<BaseTypes.Boolean>
+    {
+        public NumberGreaterOrEqualExpression(IValue left, IValue right) : base(left, right)
+        {
+            if (!(IsNumericType(left) && IsNumericType(right)))
+            {
+                throw new Exception();
+            }
+        }
+
+        public override void Execute(Scope context)
+        {
+            dynamic val1 = _leftSide.Evaluate();
+            dynamic val2 = _rightSide.Evaluate();
+
+            if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
+            {
+                _returnValue = new BaseTypes.Boolean(val1.Value >= val2.Value);
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+    }
+
+    internal class EqualExpression : MathExpression<BaseTypes.Boolean>
+    {
+        public EqualExpression(IValue left, IValue right) : base(left, right)
+        {
+            if (!(IsNumericType(left) && IsNumericType(right)) && !(IsLogicType(left) && IsLogicType(right)))
+            {
+                throw new Exception();
+            }
+        }
+
+        public override void Execute(Scope context)
+        {
+            dynamic val1 = _leftSide.Evaluate();
+            dynamic val2 = _rightSide.Evaluate();
+
+            if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
+            {
+                _returnValue = new BaseTypes.Boolean(val1.Value == val2.Value);
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+    }
+
+    internal class NotEqualExpression : MathExpression<BaseTypes.Boolean>
+    {
+        public NotEqualExpression(IValue left, IValue right) : base(left, right)
+        {
+            if (!(IsNumericType(left) && IsNumericType(right)) && !(IsLogicType(left) && IsLogicType(right)))
+            {
+                throw new Exception();
+            }
+        }
+
+        public override void Execute(Scope context)
+        {
+            dynamic val1 = _leftSide.Evaluate();
+            dynamic val2 = _rightSide.Evaluate();
+
+            if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
+            {
+                _returnValue = new BaseTypes.Boolean(val1.Value != val2.Value);
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
     }
 }

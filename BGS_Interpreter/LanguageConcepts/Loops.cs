@@ -49,7 +49,7 @@ namespace BGS_Interpreter.LanguageConcepts.Loops
         {
             if (!IsNumericType(start) || !IsNumericType(end) || !IsNumericType(step))
             {
-                throw new Exception();
+                throw new Exception("Value in loop is not numeric.");
             }
 
             _indexer = variableIdentifier;

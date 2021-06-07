@@ -623,12 +623,12 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_NUMBER_INTEGER :
                 //<Number> ::= Integer
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_NUMBER_DOUBLEVAL :
-                //<Number> ::= DoubleVal
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Number> ::= DoubleVal
+                    //todo: Create a new object using the stored tokens.
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_STATEMENT_RETURN_SEMI :
                 //<Statement> ::= return <Expression> ';'
@@ -653,7 +653,7 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_STATEMENT3 :
                 //<Statement> ::= <ForStatement>
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_STATEMENT4 :
                 //<Statement> ::= <FuncStatment>
@@ -735,8 +735,11 @@ namespace BGS_Interpreter
                     //<IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}'
                     //todo: Create a new object using the stored tokens.
                     {
+                        variablesTypes.Push(new());
                         var condition = CreateObject(token.Tokens[2]) as IValue<LanguageConcepts.BaseTypes.Boolean>;
                         var statements = CreateObject(token.Tokens[5]) as List<IExecutable>;
+                        variablesTypes.Pop();
+                        
                         if (condition is not null && statements is not null)
                         {
                             return new IfStatement(condition, statements.ToArray());
@@ -748,9 +751,11 @@ namespace BGS_Interpreter
                     //<IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}' else '{' <Statements> '}'
                     //todo: Create a new object using the stored tokens.
                     {
+                        variablesTypes.Push(new ());
                         var condition = CreateObject(token.Tokens[2]) as IValue<LanguageConcepts.BaseTypes.Boolean>;
                         var statementsTrue = CreateObject(token.Tokens[5]) as List<IExecutable>;
                         var statementsFalse = CreateObject(token.Tokens[9]) as List<IExecutable>;
+                        variablesTypes.Pop();
 
                         if (condition is not null && statementsTrue is not null && statementsFalse is not null)
                         {
@@ -760,14 +765,43 @@ namespace BGS_Interpreter
                     }
 
                 case (int)RuleConstants.RULE_FORSTATEMENT_FOR_IDENTIFIER_IN_LPAREN_COMMA_RPAREN_LBRACE_RBRACE :
-                //<ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ')' '{' <Statements> '}'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ')' '{' <Statements> '}'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        variablesTypes.Push(new());
+                        var name = CreateObject(token.Tokens[1]) as string;
+                        variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Double);
+                        var identifier = new VariableIdentifier<LanguageConcepts.BaseTypes.Double>(name);
+                        var start = CreateObject(token.Tokens[4]) as IValue;
+                        var end = CreateObject(token.Tokens[6]) as IValue;
+                        var statements = CreateObject(token.Tokens[9]) as List<IExecutable>;
+                        variablesTypes.Pop();
+                        if (name is not null && start is not null && end is not null && statements is not null)
+                        {
+                            return new LanguageConcepts.Loops.ForLoop(identifier, start, end, statements.ToArray());
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_FORSTATEMENT_FOR_IDENTIFIER_IN_LPAREN_COMMA_COMMA_RPAREN_LBRACE_RBRACE :
-                //<ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ',' <Number> ')' '{' <Statements> '}'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ',' <Number> ')' '{' <Statements> '}'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        variablesTypes.Push(new());
+                        var name = CreateObject(token.Tokens[1]) as string;
+                        variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Double);
+                        var identifier = new VariableIdentifier<LanguageConcepts.BaseTypes.Double>(name);
+                        var start = CreateObject(token.Tokens[4]) as IValue;
+                        var end = CreateObject(token.Tokens[6]) as IValue;
+                        var step = CreateObject(token.Tokens[8]) as IValue;
+                        var statements = CreateObject(token.Tokens[11]) as List<IExecutable>;
+                        variablesTypes.Pop();
+                        if (name is not null && start is not null && end is not null && step is not null && statements is not null)
+                        {
+                            return new LanguageConcepts.Loops.ForLoop(identifier, start, end, step, statements.ToArray());
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_WHILESTATEMENT_WHILE_LPAREN_RPAREN_LBRACE_RBRACE :
                     //<WhileStatement> ::= while '(' <Expression> ')' '{' <Statements> '}'

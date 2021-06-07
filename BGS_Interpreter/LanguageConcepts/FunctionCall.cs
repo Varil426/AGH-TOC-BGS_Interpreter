@@ -37,7 +37,7 @@ namespace BGS_Interpreter.LanguageConcepts
             if (function is Function<T> convertedFunction)
             {
                 convertedFunction.SetInputs(_inputs);
-                _returnValue = convertedFunction.Evaluate() as T;
+                _returnValue = convertedFunction.Evaluate(context) as T;
             }
             else
             {

@@ -56,7 +56,7 @@ namespace BGS_Interpreter.LanguageConcepts
 
             if (_initValue != null)
             {
-                context.GetVariable(Name).Assign(_initValue.Evaluate());
+                context.GetVariable(Name).Assign(_initValue.Evaluate(context));
             }
         }
     }
@@ -89,6 +89,9 @@ namespace BGS_Interpreter.LanguageConcepts
                     break;
                 case BaseTypes.String:
                     context.AddFunction(new Function<BaseTypes.String>(Name, _inputDeclarations.ToArray(), _executables.ToArray()));
+                    break;
+                case BaseTypes.Void:
+                    context.AddFunction(new Function<BaseTypes.Void>(Name, _inputDeclarations.ToArray(), _executables.ToArray()));
                     break;
                 default:
                     throw new InvalidOperationException("Unknow type.");

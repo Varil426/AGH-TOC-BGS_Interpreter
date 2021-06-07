@@ -68,16 +68,16 @@ namespace BGS_Interpreter.LanguageConcepts
                 switch (inputDeclaration.Type)
                 {
                     case BaseTypes.Integer when variable is Variable<BaseTypes.Integer> var && inputValuesList[i] is IValue<BaseTypes.Integer> val:
-                        var.Assign(val.Evaluate() as BaseTypes.Integer);
+                        var.Assign(val.Evaluate(context) as BaseTypes.Integer);
                         break;
                     case BaseTypes.Double when variable is Variable<BaseTypes.Double> var && inputValuesList[i] is IValue<BaseTypes.Double> val:
-                        var.Assign(val.Evaluate() as BaseTypes.Double);
+                        var.Assign(val.Evaluate(context) as BaseTypes.Double);
                         break;
                     case BaseTypes.String when variable is Variable<BaseTypes.String> var && inputValuesList[i] is IValue<BaseTypes.String> val:
-                        var.Assign(val.Evaluate() as BaseTypes.String);
+                        var.Assign(val.Evaluate(context) as BaseTypes.String);
                         break;
                     case BaseTypes.Boolean when variable is Variable<BaseTypes.Boolean> var && inputValuesList[i] is IValue<BaseTypes.Boolean> val:
-                        var.Assign(val.Evaluate() as BaseTypes.Boolean);
+                        var.Assign(val.Evaluate(context) as BaseTypes.Boolean);
                         break;
                 }
             }

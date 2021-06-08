@@ -1,0 +1,19 @@
+﻿function Fib(int number): int {
+	boolean cond1 = number == 0;
+	boolean cond2 = number == 1;
+	if (cond1 || cond2) {
+		return number;
+	}
+
+	int subtracted1 = number - 1;
+	int subtracted2 = number - 2;
+	int newValue1 = Fib(subtracted1);
+	int newValue2 = Fib(subtracted2);
+
+	return newValue1 + newValue2;
+}
+
+print("I'll print x-th number of Fibonacci sequence. (We assume sequence starts with 0 and 1 and is indexed from 0)");
+int x = 7;
+
+print(Fib(x));

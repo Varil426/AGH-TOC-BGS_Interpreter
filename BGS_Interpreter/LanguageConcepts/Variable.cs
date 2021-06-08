@@ -43,7 +43,7 @@ namespace BGS_Interpreter.LanguageConcepts
             }
             else
             {
-                throw new Exception();
+                throw new Exception("Wrong value assigned.");
             }
         }
 

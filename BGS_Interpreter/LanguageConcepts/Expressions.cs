@@ -84,7 +84,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
         {
             if (!((IsNumericType(left) || IsStringType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsStringType(right) || IsVariableIdentifier(right))))
             {
-                throw new Exception();
+                throw new Exception("Wrong value to add.");
             }
         }
 
@@ -119,7 +119,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
         {
             if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
-                throw new Exception();
+                throw new Exception("Wrong value to subtract.");
             }
         }
 
@@ -151,7 +151,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
         {
             if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
-                throw new Exception();
+                throw new Exception("Wrong value to multiply.");
             }
         }
 
@@ -183,7 +183,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
         {
             if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
-                throw new Exception();
+                throw new Exception("Wrong value to divide.");
             }
         }
 
@@ -223,7 +223,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
         {
             if (!((IsLogicType(left) || IsVariableIdentifier(left)) && (IsLogicType(right) || IsVariableIdentifier(right))))
             {
-                throw new Exception();
+                throw new Exception("Wrong value in && expression.");
             }
         }
 
@@ -241,7 +241,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
         {
             if (!((IsLogicType(left) || IsVariableIdentifier(left)) && (IsLogicType(right) || IsVariableIdentifier(right))))
             {
-                throw new Exception();
+                throw new Exception("Wrong value in || expression.");
             }
         }
 
@@ -259,7 +259,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
         {
             if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
-                throw new Exception();
+                throw new Exception("Wrong value in < expression.");
             }
         }
 
@@ -274,7 +274,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
             }
             else
             {
-                throw new Exception();
+                throw new Exception("Wrong value to compare in < expression.");
             }
         }
     }
@@ -285,7 +285,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
         {
             if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
-                throw new Exception();
+                throw new Exception("Wrong value in > expression.");
             }
         }
 
@@ -300,7 +300,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
             }
             else
             {
-                throw new Exception();
+                throw new Exception("Wrong value to compare in > expression.");
             }
         }
     }
@@ -311,7 +311,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
         {
             if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
-                throw new Exception();
+                throw new Exception("Wrong value in <= expression.");
             }
         }
 
@@ -326,7 +326,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
             }
             else
             {
-                throw new Exception();
+                throw new Exception("Wrong value to compare in <= expression.");
             }
         }
     }
@@ -337,7 +337,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
         {
             if (!((IsNumericType(left) || IsVariableIdentifier(left)) && (IsNumericType(right) || IsVariableIdentifier(right))))
             {
-                throw new Exception();
+                throw new Exception("Wrong value in >= expression.");
             }
         }
 
@@ -352,7 +352,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
             }
             else
             {
-                throw new Exception();
+                throw new Exception("Wrong value to compare in >= expression.");
             }
         }
     }
@@ -374,7 +374,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
             }
             else
             {
-                throw new Exception();
+                throw new Exception("Wrong value to compare in == expression.");
             }
         }
     }
@@ -396,11 +396,12 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
             }
             else
             {
-                throw new Exception();
+                throw new Exception("Wrong value to compare in != expression.");
             }
         }
     }
 
+//TODO exception! 
     internal class LogicalNotExpression : Expression<BaseTypes.Boolean>
     {
         private readonly IValue<BaseTypes.Boolean> _initialValue;

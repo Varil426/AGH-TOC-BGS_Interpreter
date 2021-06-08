@@ -28,7 +28,7 @@ namespace BGS_Interpreter.LanguageConcepts
         public override T Evaluate(Scope context)
         {
             Execute(context);
-            return _returnValue as T ?? throw new Exception();
+            return _returnValue as T ?? throw new Exception("Return value does not match expected type.");
         }
 
         public override void Execute(Scope context)

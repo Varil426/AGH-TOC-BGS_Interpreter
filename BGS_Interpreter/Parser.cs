@@ -265,7 +265,7 @@ namespace BGS_Interpreter
 
             }
 
-            throw new Exception();
+            throw new Exception("Error during parsing.");
         }
 
         private Object CreateObject(Token token)
@@ -636,7 +636,7 @@ namespace BGS_Interpreter
                         {
                             return new VariableIdentifier<LanguageConcepts.BaseTypes.Boolean>(name);
                         }
-                        throw new Exception();
+                        throw new Exception("Value not accepted.");
                     }
 
                 case (int)RuleConstants.RULE_VALUE_BOOLEANVAL :
@@ -671,10 +671,10 @@ namespace BGS_Interpreter
                                 case IValue<LanguageConcepts.BaseTypes.String> val:
                                     return new ReturnStatement<LanguageConcepts.BaseTypes.String>(val);
                                 default:
-                                    throw new Exception();
+                                    throw new Exception("Return value is not correct.");
                             }
                         }
-                        throw new Exception();
+                        throw new Exception("Return value is not correct.");
                     }
 
                 case (int)RuleConstants.RULE_STATEMENT_SEMI :
@@ -770,7 +770,7 @@ namespace BGS_Interpreter
                         {
                             return new Print(value);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in print statement.");
                     }
 
                 case (int)RuleConstants.RULE_IFSTATEMENT_IF_LPAREN_RPAREN_LBRACE_RBRACE :
@@ -786,7 +786,7 @@ namespace BGS_Interpreter
                         {
                             return new IfStatement(condition, statements.ToArray());
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in if statement.");
                     }
 
                 case (int)RuleConstants.RULE_IFSTATEMENT_IF_LPAREN_RPAREN_LBRACE_RBRACE_ELSE_LBRACE_RBRACE :
@@ -803,7 +803,7 @@ namespace BGS_Interpreter
                         {
                             return new IfStatement(condition, statementsTrue.ToArray(), statementsFalse.ToArray());
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in if-else statement.");
                     }
 
                 case (int)RuleConstants.RULE_FORSTATEMENT_FOR_IDENTIFIER_IN_LPAREN_COMMA_RPAREN_LBRACE_RBRACE :
@@ -822,7 +822,7 @@ namespace BGS_Interpreter
                         {
                             return new LanguageConcepts.Loops.ForLoop(identifier, start, end, statements.ToArray());
                         }
-                        throw new Exception();
+                        throw new Exception("For statement is not correct.");
                     }
 
                 case (int)RuleConstants.RULE_FORSTATEMENT_FOR_IDENTIFIER_IN_LPAREN_COMMA_COMMA_RPAREN_LBRACE_RBRACE :
@@ -842,7 +842,7 @@ namespace BGS_Interpreter
                         {
                             return new LanguageConcepts.Loops.ForLoop(identifier, start, end, step, statements.ToArray());
                         }
-                        throw new Exception();
+                        throw new Exception("For statement is not correct.");
                     }
 
                 case (int)RuleConstants.RULE_WHILESTATEMENT_WHILE_LPAREN_RPAREN_LBRACE_RBRACE :
@@ -855,7 +855,7 @@ namespace BGS_Interpreter
                             ReleaseStackLevel();
                             return new LanguageConcepts.Loops.WhileLoop(condition, statements.ToArray());
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in while statement.");
                     }
 
                 case (int)RuleConstants.RULE_RETVALUE_INT :
@@ -894,7 +894,7 @@ namespace BGS_Interpreter
                             return new FunctionDeclaration<LanguageConcepts.BaseTypes.Void>(identifier, declarations.ToArray(), statements.ToArray(), new LanguageConcepts.BaseTypes.Void()) ;
                         }
 
-                        throw new Exception();
+                        throw new Exception("Function declaration is not correct.");
                     }
 
                 case (int)RuleConstants.RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_LBRACE_RBRACE2 :
@@ -912,7 +912,7 @@ namespace BGS_Interpreter
                             return new FunctionDeclaration<LanguageConcepts.BaseTypes.Void>(identifier, Array.Empty<Declaration>(), statements.ToArray(), new LanguageConcepts.BaseTypes.Void());
                         }
 
-                        throw new Exception();
+                        throw new Exception("Function declaration is not correct.");
                     }
 
                 case (int)RuleConstants.RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_COLON_LBRACE_RBRACE :
@@ -941,11 +941,11 @@ namespace BGS_Interpreter
                                 case System.Type when returnType == typeof(LanguageConcepts.BaseTypes.Double):
                                     return new FunctionDeclaration<LanguageConcepts.BaseTypes.Double>(identifier, declarations.ToArray(), statements.ToArray(), new LanguageConcepts.BaseTypes.Double(0));
                                 default:
-                                    throw new Exception();
+                                    throw new Exception("Return value does not match expected type.");
                             }
                         }
 
-                        throw new Exception();
+                        throw new Exception("Function declaration is not correct.");
                     }
 
                 case (int)RuleConstants.RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_COLON_LBRACE_RBRACE2 :
@@ -973,11 +973,11 @@ namespace BGS_Interpreter
                                 case System.Type when returnType == typeof(LanguageConcepts.BaseTypes.Double):
                                     return new FunctionDeclaration<LanguageConcepts.BaseTypes.Double>(identifier, Array.Empty<Declaration>(), statements.ToArray(), new LanguageConcepts.BaseTypes.Double(0));
                                 default:
-                                    throw new Exception();
+                                    throw new Exception("Return value does not match expected type.");
                             }
                         }
 
-                        throw new Exception();
+                        throw new Exception("Function declaration is not correct.");
                     }
 
                 case (int)RuleConstants.RULE_PARAMS :
@@ -990,7 +990,7 @@ namespace BGS_Interpreter
                                 declaration
                             };
                         }
-                        throw new Exception();
+                        throw new Exception("Param in function is not correct.");
                     }
 
                 case (int)RuleConstants.RULE_PARAMS_COMMA :
@@ -1008,7 +1008,7 @@ namespace BGS_Interpreter
 
                             return declarations;
                         }
-                        throw new Exception();
+                        throw new Exception("Param in function is not correct.");
                     }
 
                 case (int)RuleConstants.RULE_DECLARATION_INT_IDENTIFIER :
@@ -1058,7 +1058,7 @@ namespace BGS_Interpreter
                             variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.String);
                             return new LanguageConcepts.VariableDeclaration<LanguageConcepts.BaseTypes.String>(new LanguageConcepts.BaseTypes.String(string.Empty), name, value);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in string declaration.");
                     }
 
                 case (int)RuleConstants.RULE_DECLARATION_DOUBLE_IDENTIFIER_EQ :
@@ -1072,7 +1072,7 @@ namespace BGS_Interpreter
                             variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Double);
                             return new LanguageConcepts.VariableDeclaration<LanguageConcepts.BaseTypes.Double>(new LanguageConcepts.BaseTypes.Double(0), name, value);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in double declaration.");
                     }
 
                 case (int)RuleConstants.RULE_DECLARATION_INT_IDENTIFIER_EQ :
@@ -1086,7 +1086,7 @@ namespace BGS_Interpreter
                             variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Integer);
                             return new LanguageConcepts.VariableDeclaration<LanguageConcepts.BaseTypes.Integer>(new LanguageConcepts.BaseTypes.Integer(0), name, value);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in int declaration.");
                     }
 
                 case (int)RuleConstants.RULE_DECLARATION_BOOLEAN_IDENTIFIER_EQ:
@@ -1100,7 +1100,7 @@ namespace BGS_Interpreter
                             variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Boolean);
                             return new LanguageConcepts.VariableDeclaration<LanguageConcepts.BaseTypes.Boolean>(new LanguageConcepts.BaseTypes.Boolean(false), name, value);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in boolean declaration.");
                     }
 
                 case (int)RuleConstants.RULE_EXPRESSION_GT :
@@ -1111,7 +1111,7 @@ namespace BGS_Interpreter
                         {
                             return new NumberGreaterExpression(left, right);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in comparison.");
 
                     }
 
@@ -1123,7 +1123,7 @@ namespace BGS_Interpreter
                         {
                             return new NumberLessExpression(left, right);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in comparison.");
                         
                     }
 
@@ -1135,7 +1135,7 @@ namespace BGS_Interpreter
                         {
                             return new NumberGreaterOrEqualExpression(left, right);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in comparison.");
 
                     }
 
@@ -1147,7 +1147,7 @@ namespace BGS_Interpreter
                         {
                             return new NumberLessOrEqualExpression(left, right);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in comparison.");
 
                     }
 
@@ -1159,7 +1159,7 @@ namespace BGS_Interpreter
                         {
                             return new EqualExpression(left, right);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in comparison.");
 
                     }
 
@@ -1171,7 +1171,7 @@ namespace BGS_Interpreter
                         {
                             return new NotEqualExpression(left, right);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in comparison.");
 
                     }
 
@@ -1192,7 +1192,7 @@ namespace BGS_Interpreter
                             case IValue<LanguageConcepts.BaseTypes.Boolean> switchValue:
                                 return new LanguageConcepts.Expressions.AssignmentExpression<LanguageConcepts.BaseTypes.Boolean>(variableIdentifier, switchValue);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in assignment.");
                     }
 
                 case (int)RuleConstants.RULE_EXPRESSION :
@@ -1214,7 +1214,7 @@ namespace BGS_Interpreter
                                     return new LogicalAndExpression(val1, val2);
                             }
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in && expression.");
                     }
 
                 case (int)RuleConstants.RULE_LOGICEXP_PIPEPIPE :
@@ -1231,7 +1231,7 @@ namespace BGS_Interpreter
                                     return new LogicalOrExpression(val1, val2);
                             }
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in || expression.");
                     }
 
                 case (int)RuleConstants.RULE_LOGICEXP :
@@ -1257,7 +1257,7 @@ namespace BGS_Interpreter
                                     return new AdditionExpression<LanguageConcepts.BaseTypes.String>(val1, val2);
                             }
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in add expression.");
                     }
 
                 case (int)RuleConstants.RULE_ADDEXP_MINUS :
@@ -1276,7 +1276,7 @@ namespace BGS_Interpreter
                                     return new SubtractionExpression<LanguageConcepts.BaseTypes.Double>(val1, val2);
                             }
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in subtract expression.");
                     }
 
                 case (int)RuleConstants.RULE_ADDEXP :
@@ -1300,7 +1300,7 @@ namespace BGS_Interpreter
                                     return new MultiplicationExpression<LanguageConcepts.BaseTypes.Double>(val1, val2);
                             }
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in multiply expression.");
                     }
 
                 case (int)RuleConstants.RULE_MULEXP_DIV :
@@ -1319,7 +1319,7 @@ namespace BGS_Interpreter
                                     return new DivisionExpression<LanguageConcepts.BaseTypes.Double>(val1, val2);
                             }
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in divide expression.");
                     }
 
                 case (int)RuleConstants.RULE_MULEXP :
@@ -1336,7 +1336,7 @@ namespace BGS_Interpreter
                         {
                             return new LogicalNotExpression(value);
                         }
-                        throw new Exception();
+                        throw new Exception("Forbidden token in negation.");
                     }
 
                 case (int)RuleConstants.RULE_MULEXP2 :
@@ -1357,14 +1357,14 @@ namespace BGS_Interpreter
                                 System.Type type when type == typeof(LanguageConcepts.BaseTypes.Double) => new VariableIdentifier<LanguageConcepts.BaseTypes.Double>(name),
                                 System.Type type when type == typeof(LanguageConcepts.BaseTypes.Integer) => new VariableIdentifier<LanguageConcepts.BaseTypes.Integer>(name),
                                 System.Type type when type == typeof(LanguageConcepts.BaseTypes.String) => new VariableIdentifier<LanguageConcepts.BaseTypes.String>(name),
-                                _ => throw new Exception()
+                                _ => throw new Exception("Value is not correct in call function.")
                             };
 
                             return new List<IValue> { 
                                 value
                             };
                         }
-                        throw new Exception();
+                        throw new Exception("Value is not correct in call function.");
                     }
 
                 case (int)RuleConstants.RULE_TOCALLPARAM_IDENTIFIER_COMMA :
@@ -1380,13 +1380,13 @@ namespace BGS_Interpreter
                                 System.Type type when type == typeof(LanguageConcepts.BaseTypes.Double) => new VariableIdentifier<LanguageConcepts.BaseTypes.Double>(firstParameterName),
                                 System.Type type when type == typeof(LanguageConcepts.BaseTypes.Integer) => new VariableIdentifier<LanguageConcepts.BaseTypes.Integer>(firstParameterName),
                                 System.Type type when type == typeof(LanguageConcepts.BaseTypes.String) => new VariableIdentifier<LanguageConcepts.BaseTypes.String>(firstParameterName),
-                                _ => throw new Exception()
+                                _ => throw new Exception("Value is not correct in call function.")
                             };
                             listOfParams.Add(firstValue);
                             listOfParams.AddRange(restOfParams);
                             return listOfParams;
                         }
-                        throw new Exception();
+                        throw new Exception("Value is not correct in call function.");
                     }
 
                 case (int)RuleConstants.RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN :
@@ -1413,7 +1413,7 @@ namespace BGS_Interpreter
                             }
 
                         }
-                        throw new Exception();
+                        throw new Exception("Value is not correct in call function.");
                     }
 
                 case (int)RuleConstants.RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN2 :
@@ -1439,7 +1439,7 @@ namespace BGS_Interpreter
                             }
                             
                         }
-                        throw new Exception();
+                        throw new Exception("Calling function is not correct.");
                     }
             }
             throw new RuleException("Unknown rule");

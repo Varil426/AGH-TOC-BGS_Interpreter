@@ -1,0 +1,25 @@
+﻿for i in (0, 100, 3) {
+	print("Hi! I'm ");
+	print(i);
+}
+
+boolean condition = True;
+int counter = 12;
+
+print("");
+
+while (condition) {
+	if (counter <= 0) {
+		condition = False;
+		print(condition);
+	} else {
+		print(counter);
+	}
+	counter = counter - 1;
+}
+
+int counter2 = 4;
+while (counter2 > 0) {
+	print(counter2);
+	counter2 = counter2 - 1;
+}

@@ -1,0 +1,13 @@
+﻿function sumDouble(double a1, double a2): double {
+	return a1 + a2;
+}
+
+function multiplyInt(int a1, int a2): int {
+	return a1 * a2;
+}
+
+double doubleValue = 32.3;
+int integerValue = 32;
+
+print(sumDouble(doubleValue, doubleValue));
+print(multiplyInt(integerValue, integerValue));

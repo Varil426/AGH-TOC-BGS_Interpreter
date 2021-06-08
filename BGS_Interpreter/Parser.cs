@@ -188,7 +188,31 @@ namespace BGS_Interpreter
     {
         private LALRParser parser;
 
-        private readonly Stack<Dictionary<string, System.Type>> variablesTypes = new ();
+        private readonly Stack<Dictionary<string, System.Type>> variablesTypes = new();
+
+        private readonly Stack<Dictionary<string, System.Type>> functionsTypes = new();
+
+        private void CreateNewStackLevel()
+        {
+            variablesTypes.Push(new());
+            functionsTypes.Push(new());
+        }
+
+        private void ReleaseStackLevel()
+        {
+            variablesTypes.Pop();
+            functionsTypes.Pop();
+        }
+
+        private System.Type GetVariableType(string name)
+        {
+            return variablesTypes.SelectMany(x => x).First(x => x.Key == name).Value;
+        }
+
+        private System.Type GetFuntionType(string name)
+        {
+            return functionsTypes.SelectMany(x => x).First(x => x.Key == name).Value;
+        }
 
         public MyParser(string pathToFile)
         {
@@ -568,10 +592,10 @@ namespace BGS_Interpreter
                     {
                         //<Program> ::= <Statements>
                         //todo: Create a new object using the stored tokens.
-                        variablesTypes.Push(new ());
+                        CreateNewStackLevel();
                         var executables = CreateObject(token.Tokens[0]) as List<IExecutable>;
                         var program = new LanguageConcepts.Program(executables.ToArray());
-                        variablesTypes.Pop();
+                        ReleaseStackLevel();
                         return program;
                     }
 
@@ -595,7 +619,7 @@ namespace BGS_Interpreter
                     //todo: Create a new object using the stored tokens.
                     {
                         var name = CreateObject(token.Tokens[0]) as string;
-                        var typeOfVariable = variablesTypes.SelectMany(x => x).First(x => x.Key == name).Value;
+                        var typeOfVariable = GetVariableType(name);
                         if (typeOfVariable == typeof(LanguageConcepts.BaseTypes.Integer))
                         {
                             return new VariableIdentifier<LanguageConcepts.BaseTypes.Integer>(name);
@@ -623,17 +647,35 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_NUMBER_INTEGER :
                 //<Number> ::= Integer
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_NUMBER_DOUBLEVAL :
-                //<Number> ::= DoubleVal
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Number> ::= DoubleVal
+                    //todo: Create a new object using the stored tokens.
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_STATEMENT_RETURN_SEMI :
-                //<Statement> ::= return <Expression> ';'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Statement> ::= return <Expression> ';'
+                    //todo: Create a new object using the stored tokens.
+                    { 
+                        if (CreateObject(token.Tokens[1]) is IValue value)
+                        {
+                            switch (value)
+                            {
+                                case IValue<LanguageConcepts.BaseTypes.Boolean> val:
+                                    return new ReturnStatement<LanguageConcepts.BaseTypes.Boolean>(val);
+                                case IValue<LanguageConcepts.BaseTypes.Double> val:
+                                    return new ReturnStatement<LanguageConcepts.BaseTypes.Double>(val);
+                                case IValue<LanguageConcepts.BaseTypes.Integer> val:
+                                    return new ReturnStatement<LanguageConcepts.BaseTypes.Integer>(val);
+                                case IValue<LanguageConcepts.BaseTypes.String> val:
+                                    return new ReturnStatement<LanguageConcepts.BaseTypes.String>(val);
+                                default:
+                                    throw new Exception();
+                            }
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_STATEMENT_SEMI :
                     //<Statement> ::= <Declaration> ';'
@@ -653,12 +695,12 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_STATEMENT3 :
                 //<Statement> ::= <ForStatement>
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_STATEMENT4 :
                 //<Statement> ::= <FuncStatment>
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_STATEMENT_SEMI2 :
                     //<Statement> ::= <Expression> ';'
@@ -735,8 +777,11 @@ namespace BGS_Interpreter
                     //<IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}'
                     //todo: Create a new object using the stored tokens.
                     {
+                        CreateNewStackLevel();
                         var condition = CreateObject(token.Tokens[2]) as IValue<LanguageConcepts.BaseTypes.Boolean>;
                         var statements = CreateObject(token.Tokens[5]) as List<IExecutable>;
+                        ReleaseStackLevel();
+                        
                         if (condition is not null && statements is not null)
                         {
                             return new IfStatement(condition, statements.ToArray());
@@ -748,9 +793,11 @@ namespace BGS_Interpreter
                     //<IfStatement> ::= if '(' <Expression> ')' '{' <Statements> '}' else '{' <Statements> '}'
                     //todo: Create a new object using the stored tokens.
                     {
+                        CreateNewStackLevel();
                         var condition = CreateObject(token.Tokens[2]) as IValue<LanguageConcepts.BaseTypes.Boolean>;
                         var statementsTrue = CreateObject(token.Tokens[5]) as List<IExecutable>;
                         var statementsFalse = CreateObject(token.Tokens[9]) as List<IExecutable>;
+                        ReleaseStackLevel();
 
                         if (condition is not null && statementsTrue is not null && statementsFalse is not null)
                         {
@@ -760,77 +807,209 @@ namespace BGS_Interpreter
                     }
 
                 case (int)RuleConstants.RULE_FORSTATEMENT_FOR_IDENTIFIER_IN_LPAREN_COMMA_RPAREN_LBRACE_RBRACE :
-                //<ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ')' '{' <Statements> '}'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ')' '{' <Statements> '}'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        CreateNewStackLevel();
+                        var name = CreateObject(token.Tokens[1]) as string;
+                        variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Double);
+                        var identifier = new VariableIdentifier<LanguageConcepts.BaseTypes.Double>(name);
+                        var start = CreateObject(token.Tokens[4]) as IValue;
+                        var end = CreateObject(token.Tokens[6]) as IValue;
+                        var statements = CreateObject(token.Tokens[9]) as List<IExecutable>;
+                        ReleaseStackLevel();
+                        if (name is not null && start is not null && end is not null && statements is not null)
+                        {
+                            return new LanguageConcepts.Loops.ForLoop(identifier, start, end, statements.ToArray());
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_FORSTATEMENT_FOR_IDENTIFIER_IN_LPAREN_COMMA_COMMA_RPAREN_LBRACE_RBRACE :
-                //<ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ',' <Number> ')' '{' <Statements> '}'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<ForStatement> ::= for Identifier in '(' <Number> ',' <Number> ',' <Number> ')' '{' <Statements> '}'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        CreateNewStackLevel();
+                        var name = CreateObject(token.Tokens[1]) as string;
+                        variablesTypes.Peek()[name] = typeof(LanguageConcepts.BaseTypes.Double);
+                        var identifier = new VariableIdentifier<LanguageConcepts.BaseTypes.Double>(name);
+                        var start = CreateObject(token.Tokens[4]) as IValue;
+                        var end = CreateObject(token.Tokens[6]) as IValue;
+                        var step = CreateObject(token.Tokens[8]) as IValue;
+                        var statements = CreateObject(token.Tokens[11]) as List<IExecutable>;
+                        ReleaseStackLevel();
+                        if (name is not null && start is not null && end is not null && step is not null && statements is not null)
+                        {
+                            return new LanguageConcepts.Loops.ForLoop(identifier, start, end, step, statements.ToArray());
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_WHILESTATEMENT_WHILE_LPAREN_RPAREN_LBRACE_RBRACE :
                     //<WhileStatement> ::= while '(' <Expression> ')' '{' <Statements> '}'
                     //todo: Create a new object using the stored tokens.
                     {
-                        variablesTypes.Push(new());
+                        CreateNewStackLevel();
                         if (CreateObject(token.Tokens[2]) is IValue<LanguageConcepts.BaseTypes.Boolean> condition && CreateObject(token.Tokens[5]) is List<IExecutable> statements)
                         {
-                            variablesTypes.Pop();
+                            ReleaseStackLevel();
                             return new LanguageConcepts.Loops.WhileLoop(condition, statements.ToArray());
                         }
                         throw new Exception("Forbiden token in while statement.");
                     }
 
                 case (int)RuleConstants.RULE_RETVALUE_INT :
-                //<RetValue> ::= int
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<RetValue> ::= int
+                    //todo: Create a new object using the stored tokens.
+                    return new LanguageConcepts.BaseTypes.Integer(0);
 
                 case (int)RuleConstants.RULE_RETVALUE_DOUBLE :
                 //<RetValue> ::= double
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return new LanguageConcepts.BaseTypes.Double(0);
 
                 case (int)RuleConstants.RULE_RETVALUE_STRING :
-                //<RetValue> ::= string
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<RetValue> ::= string
+                    //todo: Create a new object using the stored tokens.
+                    return new LanguageConcepts.BaseTypes.String(string.Empty);
 
                 case (int)RuleConstants.RULE_RETVALUE_BOOLEAN :
-                //<RetValue> ::= boolean
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<RetValue> ::= boolean
+                    //todo: Create a new object using the stored tokens.
+                    return new LanguageConcepts.BaseTypes.Boolean(false);
 
                 case (int)RuleConstants.RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_LBRACE_RBRACE :
-                //<FuncStatment> ::= function Identifier '(' <Params> ')' '{' <Statements> '}'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<FuncStatment> ::= function Identifier '(' <Params> ')' '{' <Statements> '}'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var identifier = CreateObject(token.Tokens[1]) as string;
+                        functionsTypes.Peek()[identifier] = typeof(LanguageConcepts.BaseTypes.Void);
+
+                        CreateNewStackLevel();
+                        var declarations = CreateObject(token.Tokens[3]) as List<Declaration>;
+                        var statements = CreateObject(token.Tokens[6]) as List<IExecutable>;
+                        ReleaseStackLevel();
+                        if (identifier is not null && declarations is not null && statements is not null)
+                        {
+                            return new FunctionDeclaration<LanguageConcepts.BaseTypes.Void>(identifier, declarations.ToArray(), statements.ToArray(), new LanguageConcepts.BaseTypes.Void()) ;
+                        }
+
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_LBRACE_RBRACE2 :
-                //<FuncStatment> ::= function Identifier '(' ')' '{' <Statements> '}'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<FuncStatment> ::= function Identifier '(' ')' '{' <Statements> '}'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var identifier = CreateObject(token.Tokens[1]) as string;
+                        functionsTypes.Peek()[identifier] = typeof(LanguageConcepts.BaseTypes.Void);
+
+                        CreateNewStackLevel();
+                        var statements = CreateObject(token.Tokens[5]) as List<IExecutable>;
+                        ReleaseStackLevel();
+                        if (identifier is not null && statements is not null)
+                        {
+                            return new FunctionDeclaration<LanguageConcepts.BaseTypes.Void>(identifier, Array.Empty<Declaration>(), statements.ToArray(), new LanguageConcepts.BaseTypes.Void());
+                        }
+
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_COLON_LBRACE_RBRACE :
                 //<FuncStatment> ::= function Identifier '(' <Params> ')' ':' <RetValue> '{' <Statements> '}'
                 //todo: Create a new object using the stored tokens.
-                return null;
+                {
+                        var identifier = CreateObject(token.Tokens[1]) as string;
+                        var returnType = CreateObject(token.Tokens[6]).GetType();
+
+                        functionsTypes.Peek()[identifier] = returnType;
+
+                        CreateNewStackLevel();
+                        var declarations = CreateObject(token.Tokens[3]) as List<Declaration>;
+                        var statements = CreateObject(token.Tokens[8]) as List<IExecutable>;
+                        ReleaseStackLevel();
+                        if (identifier is not null && returnType is not null && declarations is not null && statements is not null)
+                        {
+                            switch (returnType)
+                            {
+                                case System.Type when returnType == typeof(LanguageConcepts.BaseTypes.Boolean):
+                                    return new FunctionDeclaration<LanguageConcepts.BaseTypes.Boolean>(identifier, declarations.ToArray(), statements.ToArray(), new LanguageConcepts.BaseTypes.Boolean(false));
+                                case System.Type when returnType == typeof(LanguageConcepts.BaseTypes.String):
+                                    return new FunctionDeclaration<LanguageConcepts.BaseTypes.String>(identifier, declarations.ToArray(), statements.ToArray(), new LanguageConcepts.BaseTypes.String(string.Empty));
+                                case System.Type when returnType == typeof(LanguageConcepts.BaseTypes.Integer):
+                                    return new FunctionDeclaration<LanguageConcepts.BaseTypes.Integer>(identifier, declarations.ToArray(), statements.ToArray(), new LanguageConcepts.BaseTypes.Integer(0));
+                                case System.Type when returnType == typeof(LanguageConcepts.BaseTypes.Double):
+                                    return new FunctionDeclaration<LanguageConcepts.BaseTypes.Double>(identifier, declarations.ToArray(), statements.ToArray(), new LanguageConcepts.BaseTypes.Double(0));
+                                default:
+                                    throw new Exception();
+                            }
+                        }
+
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_FUNCSTATMENT_FUNCTION_IDENTIFIER_LPAREN_RPAREN_COLON_LBRACE_RBRACE2 :
-                //<FuncStatment> ::= function Identifier '(' ')' ':' <RetValue> '{' <Statements> '}'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<FuncStatment> ::= function Identifier '(' ')' ':' <RetValue> '{' <Statements> '}'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var identifier = CreateObject(token.Tokens[1]) as string;
+                        var returnType = CreateObject(token.Tokens[5]).GetType();
+
+                        functionsTypes.Peek()[identifier] = returnType;
+
+                        CreateNewStackLevel();
+                        var statements = CreateObject(token.Tokens[7]) as List<IExecutable>;
+                        ReleaseStackLevel();
+                        if (identifier is not null && returnType is not null && statements is not null)
+                        {
+                            switch (returnType)
+                            {
+                                case System.Type when returnType == typeof(LanguageConcepts.BaseTypes.Boolean):
+                                    return new FunctionDeclaration<LanguageConcepts.BaseTypes.Boolean>(identifier, Array.Empty<Declaration>(), statements.ToArray(), new LanguageConcepts.BaseTypes.Boolean(false));
+                                case System.Type when returnType == typeof(LanguageConcepts.BaseTypes.String):
+                                    return new FunctionDeclaration<LanguageConcepts.BaseTypes.String>(identifier, Array.Empty<Declaration>(), statements.ToArray(), new LanguageConcepts.BaseTypes.String(string.Empty));
+                                case System.Type when returnType == typeof(LanguageConcepts.BaseTypes.Integer):
+                                    return new FunctionDeclaration<LanguageConcepts.BaseTypes.Integer>(identifier, Array.Empty<Declaration>(), statements.ToArray(), new LanguageConcepts.BaseTypes.Integer(0));
+                                case System.Type when returnType == typeof(LanguageConcepts.BaseTypes.Double):
+                                    return new FunctionDeclaration<LanguageConcepts.BaseTypes.Double>(identifier, Array.Empty<Declaration>(), statements.ToArray(), new LanguageConcepts.BaseTypes.Double(0));
+                                default:
+                                    throw new Exception();
+                            }
+                        }
+
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_PARAMS :
-                //<Params> ::= <Declaration>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Params> ::= <Declaration>
+                    //todo: Create a new object using the stored tokens.
+                    { 
+                        if (CreateObject(token.Tokens[0]) is Declaration declaration)
+                        {
+                            return new List<Declaration>{
+                                declaration
+                            };
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_PARAMS_COMMA :
-                //<Params> ::= <Declaration> ',' <Params>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<Params> ::= <Declaration> ',' <Params>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var declarations = new List<Declaration>();
+                        var firstDeclaration = CreateObject(token.Tokens[0]) as Declaration;
+                        var nextDeclarations = CreateObject(token.Tokens[2]) as List<Declaration>;
+
+                        if (firstDeclaration is not null && nextDeclarations is not null)
+                        {
+                            declarations.Add(firstDeclaration);
+                            declarations.AddRange(nextDeclarations);
+
+                            return declarations;
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_DECLARATION_INT_IDENTIFIER :
                     //<Declaration> ::= int Identifier
@@ -1163,27 +1342,105 @@ namespace BGS_Interpreter
                 case (int)RuleConstants.RULE_MULEXP2 :
                 //<MulExp> ::= <callFunc>
                 //todo: Create a new object using the stored tokens.
-                return null;
+                    return CreateObject(token.Tokens[0]);
 
                 case (int)RuleConstants.RULE_TOCALLPARAM_IDENTIFIER :
-                //<toCallParam> ::= Identifier
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<toCallParam> ::= Identifier
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var name = CreateObject(token.Tokens[0]) as string;
+                        if (name is not null)
+                        {
+                            IValue value = GetVariableType(name) switch
+                            {
+                                System.Type type when type == typeof(LanguageConcepts.BaseTypes.Boolean) => new VariableIdentifier<LanguageConcepts.BaseTypes.Boolean>(name),
+                                System.Type type when type == typeof(LanguageConcepts.BaseTypes.Double) => new VariableIdentifier<LanguageConcepts.BaseTypes.Double>(name),
+                                System.Type type when type == typeof(LanguageConcepts.BaseTypes.Integer) => new VariableIdentifier<LanguageConcepts.BaseTypes.Integer>(name),
+                                System.Type type when type == typeof(LanguageConcepts.BaseTypes.String) => new VariableIdentifier<LanguageConcepts.BaseTypes.String>(name),
+                                _ => throw new Exception()
+                            };
+
+                            return new List<IValue> { 
+                                value
+                            };
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_TOCALLPARAM_IDENTIFIER_COMMA :
-                //<toCallParam> ::= Identifier ',' <toCallParam>
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<toCallParam> ::= Identifier ',' <toCallParam>
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        if (CreateObject(token.Tokens[0]) is string firstParameterName && CreateObject(token.Tokens[2]) is List<IValue> restOfParams)
+                        {
+                            var listOfParams = new List<IValue>();
+                            IValue firstValue = GetVariableType(firstParameterName) switch
+                            {
+                                System.Type type when type == typeof(LanguageConcepts.BaseTypes.Boolean) => new VariableIdentifier<LanguageConcepts.BaseTypes.Boolean>(firstParameterName),
+                                System.Type type when type == typeof(LanguageConcepts.BaseTypes.Double) => new VariableIdentifier<LanguageConcepts.BaseTypes.Double>(firstParameterName),
+                                System.Type type when type == typeof(LanguageConcepts.BaseTypes.Integer) => new VariableIdentifier<LanguageConcepts.BaseTypes.Integer>(firstParameterName),
+                                System.Type type when type == typeof(LanguageConcepts.BaseTypes.String) => new VariableIdentifier<LanguageConcepts.BaseTypes.String>(firstParameterName),
+                                _ => throw new Exception()
+                            };
+                            listOfParams.Add(firstValue);
+                            listOfParams.AddRange(restOfParams);
+                            return listOfParams;
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN :
-                //<callFunc> ::= Identifier '(' <toCallParam> ')'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<callFunc> ::= Identifier '(' <toCallParam> ')'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var name = CreateObject(token.Tokens[0]) as string;
+                        var inputs = CreateObject(token.Tokens[2]) as List<IValue>;
+                        if (name is not null && inputs is not null)
+                        {
+                            var functionType = GetFuntionType(name);
+                            switch (functionType)
+                            {
+                                case System.Type when functionType == typeof(LanguageConcepts.BaseTypes.Void):
+                                    return new FunctionCall<LanguageConcepts.BaseTypes.Void>(name, inputs.ToArray());
+                                case System.Type when functionType == typeof(LanguageConcepts.BaseTypes.Boolean):
+                                    return new FunctionCall<LanguageConcepts.BaseTypes.Boolean>(name, inputs.ToArray());
+                                case System.Type when functionType == typeof(LanguageConcepts.BaseTypes.Double):
+                                    return new FunctionCall<LanguageConcepts.BaseTypes.Double>(name, inputs.ToArray());
+                                case System.Type when functionType == typeof(LanguageConcepts.BaseTypes.Integer):
+                                    return new FunctionCall<LanguageConcepts.BaseTypes.Integer>(name, inputs.ToArray());
+                                case System.Type when functionType == typeof(LanguageConcepts.BaseTypes.String):
+                                    return new FunctionCall<LanguageConcepts.BaseTypes.String>(name, inputs.ToArray());
+                            }
+
+                        }
+                        throw new Exception();
+                    }
 
                 case (int)RuleConstants.RULE_CALLFUNC_IDENTIFIER_LPAREN_RPAREN2 :
-                //<callFunc> ::= Identifier '(' ')'
-                //todo: Create a new object using the stored tokens.
-                return null;
+                    //<callFunc> ::= Identifier '(' ')'
+                    //todo: Create a new object using the stored tokens.
+                    {
+                        var name = CreateObject(token.Tokens[0]) as string;
+                        if (name is not null)
+                        {
+                            var functionType = GetFuntionType(name);
+                            switch (functionType)
+                            {
+                                case System.Type when functionType == typeof(LanguageConcepts.BaseTypes.Void):
+                                    return new FunctionCall<LanguageConcepts.BaseTypes.Void>(name, Array.Empty<IValue>());
+                                case System.Type when functionType == typeof(LanguageConcepts.BaseTypes.Boolean):
+                                    return new FunctionCall<LanguageConcepts.BaseTypes.Boolean>(name, Array.Empty<IValue>());
+                                case System.Type when functionType == typeof(LanguageConcepts.BaseTypes.Double):
+                                    return new FunctionCall<LanguageConcepts.BaseTypes.Double>(name, Array.Empty<IValue>());
+                                case System.Type when functionType == typeof(LanguageConcepts.BaseTypes.Integer):
+                                    return new FunctionCall<LanguageConcepts.BaseTypes.Integer>(name, Array.Empty<IValue>());
+                                case System.Type when functionType == typeof(LanguageConcepts.BaseTypes.String):
+                                    return new FunctionCall<LanguageConcepts.BaseTypes.String>(name, Array.Empty<IValue>());
+                            }
+                            
+                        }
+                        throw new Exception();
+                    }
             }
             throw new RuleException("Unknown rule");
         }

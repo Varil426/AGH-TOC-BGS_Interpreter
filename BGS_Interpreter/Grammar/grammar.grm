@@ -1,7 +1,7 @@
 "Name"    = 'BGS'
 "About"   = 'Simple grammar to create didactic programming language'
 
-"Case Sensitive" = False 
+"Case Sensitive" = True 
 "Start Symbol"   = <Program>
 
 Identifier = {Letter}{AlphaNumeric}*

@@ -29,7 +29,7 @@ namespace BGS_Interpreter.LanguageConcepts
         {
             var ifScope = new Scope(context);
 
-            var result = _condition.Evaluate() as BaseTypes.Boolean;
+            var result = _condition.Evaluate(context) as BaseTypes.Boolean;
 
             if (result.Value)
             {

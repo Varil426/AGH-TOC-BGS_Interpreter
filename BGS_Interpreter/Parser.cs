@@ -1448,13 +1448,16 @@ namespace BGS_Interpreter
         private void TokenErrorEvent(LALRParser parser, TokenErrorEventArgs args)
         {
             string message = "Token error with input: '"+args.Token.ToString()+"'";
-            //todo: Report message to UI?
+            Console.WriteLine(message);
+            Console.WriteLine($"Line: {args.Token.Location.LineNr}\nColumn: {args.Token.Location.ColumnNr}");
         }
 
         private void ParseErrorEvent(LALRParser parser, ParseErrorEventArgs args)
         {
             string message = "Parse error caused by token: '"+args.UnexpectedToken.ToString()+"'";
-            //todo: Report message to UI?
+            Console.WriteLine(message);
+            Console.WriteLine($"Expected: {args.ExpectedTokens}\nGot: {args.UnexpectedToken}");
+            Console.WriteLine($"Line: {args.UnexpectedToken?.Location.LineNr}\nColumn: {args.UnexpectedToken?.Location.ColumnNr}");
         }
 
     }

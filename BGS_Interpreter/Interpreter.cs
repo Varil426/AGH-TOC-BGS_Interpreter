@@ -1,4 +1,6 @@
-﻿namespace BGS_Interpreter
+﻿using System;
+
+namespace BGS_Interpreter
 {
     class Interpreter
     {
@@ -12,7 +14,15 @@
 
         public void Run()
         {
-            _program.Execute(null);
+            try
+            {
+                _program.Execute(null);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
     }

@@ -20,11 +20,17 @@ namespace BGS_Interpreter
                 var fileContent = new StreamReader(pathToSource).ReadToEnd();
                 var parser = new MyParser(pathToGrammarCgt);
 
-                // TODO Maybe change this?
-                var program = parser.Parse(fileContent);
+                try
+                {
+                    var program = parser.Parse(fileContent);
 
-                var interpreter = new Interpreter(program);
-                interpreter.Run();
+                    var interpreter = new Interpreter(program);
+                    interpreter.Run();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
             else
             {

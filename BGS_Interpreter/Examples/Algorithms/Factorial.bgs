@@ -1,0 +1,20 @@
+﻿function Factorial(int number): int {
+
+	if (number == 0) {
+		return 1;
+	}
+	if (number <= 2) {
+		return number;
+	}
+
+	int subtracted1 = number - 1;
+	int newValue1 = Factorial(subtracted1);
+	return number * newValue1;
+}
+
+int x = 7;
+print("Calculating factorial using recursion.");
+print("Received a number:");
+print(x);
+print("Result:");
+print(Factorial(x));

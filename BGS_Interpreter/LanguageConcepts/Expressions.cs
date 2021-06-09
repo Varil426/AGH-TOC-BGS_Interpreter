@@ -368,14 +368,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
             dynamic val1 = _leftSide.Evaluate(context);
             dynamic val2 = _rightSide.Evaluate(context);
 
-            if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
-            {
-                _returnValue = new BaseTypes.Boolean(val1.Value == val2.Value);
-            }
-            else
-            {
-                throw new Exception("Wrong value to compare in == expression.");
-            }
+            _returnValue = new BaseTypes.Boolean(val1.Value == val2.Value);
         }
     }
 
@@ -390,14 +383,7 @@ namespace BGS_Interpreter.LanguageConcepts.Expressions
             dynamic val1 = _leftSide.Evaluate(context);
             dynamic val2 = _rightSide.Evaluate(context);
 
-            if (val1 is BaseTypes.Integer or BaseTypes.Double && val2 is BaseTypes.Integer or BaseTypes.Double)
-            {
-                _returnValue = new BaseTypes.Boolean(val1.Value != val2.Value);
-            }
-            else
-            {
-                throw new Exception("Wrong value to compare in != expression.");
-            }
+            _returnValue = new BaseTypes.Boolean(val1.Value != val2.Value);
         }
     }
 

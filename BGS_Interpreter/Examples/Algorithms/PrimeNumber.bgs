@@ -1,0 +1,21 @@
+﻿function isPrime(int a): boolean{
+    int i = 2;
+    int half = a/2;
+    while (i < half){
+        int multiresult = i*2; 
+        if (multiresult == a){
+            return False;
+        }
+        i = i+1;
+    }
+    return True;
+}
+
+int val = 7;
+boolean result = isPrime(val);
+if (result){
+    print("Number is prime");
+}
+else{
+    print("Number is not prime");
+}
